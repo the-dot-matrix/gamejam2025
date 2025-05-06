@@ -14,11 +14,16 @@
     (setmetatable rectangle self)))
 
 (fn Rectangle.update [self dt collides]
+  (when self.newvelocity 
+    (set self.velocity self.newvelocity)
+    (set self.newvelocity nil))
   (set self.distance (+ self.distance (* self.velocity dt)))
-  (if (> (length collides) 0)  
-    (do (set self.velocity (self:bounces collides))
-        (set self.mode :fill))
-    (set self.mode :line)))
+  (when (and  (> (length collides) 0) 
+              (> (self.velocity:mag) 0)
+              (= self.mode :line)) 
+    (do (set self.newvelocity (self:bounces collides))
+        (set self.mode :fill)))
+  (when (= (length collides) 0) (set self.mode :line)))
 
 (fn Rectangle.draw [self collides]
   (let [(x y) (values self.distance.x self.distance.y)
@@ -38,30 +43,32 @@
         height    (- minbottom maxtop)
         size      (Vector:new width height)
         distance  (Vector:new maxleft maxtop)
-        collision {: size : distance}]
-    (when (and (> width 0) (> height 0)) collision)))
+        collide   {: size : distance :velocity other.velocity}]
+    (when (and (>= width 1) (>= height 1)) collide)))
 
-(fn Rectangle.bounces [self collides]
-  (let [flipx   (Vector:new -1 1)
-        flipx   (flipx:polar)
-        flipy   (Vector:new 1 -1)
-        flipy   (flipy:polar)
-        cwidth  (. collides 1 :size :x)
-        cheight (. collides 1 :size :y)
-        (a f)   (case [(length collides) cwidth cheight]
-                  (where [1 w h] (> w h)) (values flipy 1)
-                  (where [1 w h] (< w h)) (values flipx 1)
-                  _ (values 0 0))
-        sum     (accumulate [new a _ c (ipairs collides)]
-                  (self:bounce c new))
-        avg     (/ sum (+ (length collides) f))]
-    (Vector:new (self.velocity:mag) avg true)))
+(fn Rectangle.bounces [self cs]
+  (let [flipx     (* self.velocity (Vector:new -1 1))
+        flipy     (* self.velocity (Vector:new 1 -1))
+        flipboth  (* self.velocity (Vector:new 1 -1))
+        cwidth    (. cs 1 :size :x)
+        cheight   (. cs 1 :size :y)
+        init      (case [(length cs) cwidth cheight]
+                    (where [1 w h] (< w h)) [(flipx:polar) 1]
+                    (where [1 w h] (> w h)) [(flipy:polar) 1]
+                    _ [0 0])
+        accum     (accumulate [accum init _ c (ipairs cs)]
+                    (self:bounce c accum))
+        (sum cnt) (unpack accum)]
+    (Vector:new (self.velocity:mag) (/ sum cnt) true)))
 
 (fn Rectangle.bounce [self collide accum]
-  (let [center      #(+ $1.distance (/ $1.size 2))
+  (let [(sum count) (unpack accum)
+        center      #(+ $1.distance (/ $1.size 2))
         direction   (- (center self) (center collide))
         unitvector  (/ direction (direction:mag))
         pushangle   (unitvector:polar)]
-    (+ accum pushangle)))
+    (if (not= (collide.velocity:mag) 0)
+      [(+ sum pushangle) (+ count 1)]
+      [sum count])))
 
 Rectangle

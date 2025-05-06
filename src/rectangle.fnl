@@ -52,14 +52,14 @@
         flipboth  (* self.velocity (Vector:new 1 -1))
         cwidth    (. cs 1 :size :x)
         cheight   (. cs 1 :size :y)
-        init      (case [(length cs) cwidth cheight]
-                    (where [1 w h] (< w h)) [(flipx:polar) 1]
-                    (where [1 w h] (> w h)) [(flipy:polar) 1]
-                    _ [0 0])
-        accum     (accumulate [accum init _ c (ipairs cs)]
+        accum     (accumulate [accum [0 0] _ c (ipairs cs)]
                     (self:bounce c accum))
-        (sum cnt) (unpack accum)]
-    (Vector:new (self.velocity:mag) (/ sum cnt) true)))
+        (sum cnt) (unpack accum)
+        newangle  (case [cnt cwidth cheight]
+                    (where [0 w h] (< w h)) (flipx:polar)
+                    (where [0 w h] (> w h)) (flipy:polar)
+                    _ (/ sum cnt))]
+    (Vector:new (self.velocity:mag) newangle true)))
 
 (fn Rectangle.bounce [self collide accum]
   (let [(sum count) (unpack accum)

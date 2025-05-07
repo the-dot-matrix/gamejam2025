@@ -9,8 +9,7 @@
         speed     (or s (+ (* (love.math.random) 400) 100))
         direction (* (love.math.random) 2 math.pi)
         velocity  (Vector:new speed direction true)
-        mode      :line
-        rectangle {: size : distance : velocity : mode }]
+        rectangle {: size : distance : velocity :mode :line}]
     (setmetatable rectangle self)))
 
 (fn Rectangle.update [self dt collides]
@@ -21,7 +20,7 @@
   (when (and  (> (length collides) 0) 
               (> (self.velocity:mag) 0)
               (= self.mode :line)) 
-    (do (set self.newvelocity (self:bounces collides))
+    (do (set self.newvelocity (self:bounce collides))
         (set self.mode :fill)))
   (when (= (length collides) 0) (set self.mode :line)))
 
@@ -46,29 +45,27 @@
         collide   {: size : distance :velocity other.velocity}]
     (when (and (>= width 1) (>= height 1)) collide)))
 
-(fn Rectangle.bounces [self cs]
-  (let [flipx     (* self.velocity (Vector:new -1 1))
-        flipy     (* self.velocity (Vector:new 1 -1))
-        flipboth  (* self.velocity (Vector:new 1 -1))
-        cwidth    (. cs 1 :size :x)
-        cheight   (. cs 1 :size :y)
-        accum     (accumulate [accum [0 0] _ c (ipairs cs)]
-                    (self:bounce c accum))
-        (sum cnt) (unpack accum)
-        newangle  (case [cnt cwidth cheight]
-                    (where [0 w h] (< w h)) (flipx:polar)
-                    (where [0 w h] (> w h)) (flipy:polar)
-                    _ (/ sum cnt))]
-    (Vector:new (self.velocity:mag) newangle true)))
+(fn Rectangle.bounce [self collides]
+  (let [selffliphorizontal  (* self.velocity (Vector:new -1 1))
+        selfflipvertical    (* self.velocity (Vector:new 1 -1))
+        collidewidth        (. collides 1 :size :x)
+        collideheight       (. collides 1 :size :y)
+        (pushsum pushcount) (unpack (self:push collides))
+        pushangle    (/ pushsum pushcount)]
+    (case [pushcount collidewidth collideheight]
+      (where [0 w h] (< w h)) selffliphorizontal
+      (where [0 w h] (> w h)) selfflipvertical
+      _ (Vector:new (self.velocity:mag) pushangle true))))
 
-(fn Rectangle.bounce [self collide accum]
-  (let [(sum count) (unpack accum)
-        center      #(+ $1.distance (/ $1.size 2))
-        direction   (- (center self) (center collide))
-        unitvector  (/ direction (direction:mag))
-        pushangle   (unitvector:polar)]
-    (if (not= (collide.velocity:mag) 0)
-      [(+ sum pushangle) (+ count 1)]
-      [sum count])))
+(fn Rectangle.push [self collides]
+  (accumulate [accum [0 0] _ collide (ipairs collides)]
+    (let [center      #(+ $1.distance (/ $1.size 2))
+          direction   (- (center self) (center collide))
+          unitvector  (/ direction (direction:mag))
+          pushangle   (unitvector:polar)
+          moving?     (not= (collide.velocity:mag) 0)
+          push        #[(+ $1 pushangle) (+ $2 1)]
+          step        #(if moving? (push (unpack $2)) $2)]
+      (step collide accum))))
 
 Rectangle

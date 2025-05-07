@@ -45,8 +45,8 @@
 
 (fn Rectangle.bounces [self collides]
   (let [count (length collides)
-        sum (accumulate [sum 0 _ collide (ipairs collides)] 
-              (self:bounce collide sum))]
+        sum   (accumulate [sum 0 _ collide (ipairs collides)] 
+                (self:bounce collide sum))]
     (Vector:new (self.velocity:mag) (/ sum count) true)))
 
 (fn Rectangle.bounce [self collide sum]

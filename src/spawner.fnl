@@ -1,24 +1,41 @@
 (local Spawner {}) (set Spawner.__index Spawner)
+(local Set (require "src.set"))
 
 (fn Spawner.new [self class]
-  (setmetatable {: class :spawns [] :unresolved []} self))
+  (setmetatable {: class :spawns [] :repeats {}} self))
 
 (fn Spawner.update [self dt tick?]
   (each [A spawn (ipairs self.spawns)]
-    (spawn:update dt (icollect [B v (ipairs self.spawns)]
-      (let [unresolved  (. self.unresolved A)
-            collide?    (spawn:collide? v)]
-        (when (and tick? (not= A B))
-          (when (not collide?) (set (. unresolved B) false)) 
-          (when (and collide? (not (. unresolved B)))
-            (set (. unresolved B) true)
-            collide?)))))))
+    (when tick? (self:resolve A spawn)) 
+    (self:solve dt tick? A spawn)))
 
 (fn Spawner.draw [self]
   (each [_ spawn (ipairs self.spawns)] (spawn:draw)))
 
 (fn Spawner.spawn [self ...]
   (table.insert self.spawns (self.class:new ...))
-  (table.insert self.unresolved []))
+  (table.insert self.repeats {}))
+
+(fn Spawner.repeat? [self i check]
+  (accumulate [repeat? false k _ (pairs (. self.repeats i))]
+    (or repeat? (= check k))))
+
+(fn Spawner.solve [self dt tick? A spawn]
+  (let [checks  (icollect [B other (ipairs self.spawns)]
+                  (when (not= A B) [B (spawn:collide? other)]))
+        check   (Set:new  (icollect [_ c (ipairs checks)]
+                            (when (. c 2) (. c 1))))
+        collides  (icollect [_ c (ipairs checks)] (. c 2))
+        repeat?   (self:repeat? A check)]
+    (if (or (not tick?) (= (length collides) 0) repeat?)
+        (spawn:update dt [])
+        (do (spawn:update dt collides)
+            (set (. self :repeats A check) true)))))
+
+(fn Spawner.resolve [self A spawn]
+  (each [check _ (pairs (. self :repeats A))]
+    (when (accumulate [no? true B v (pairs check)]
+            (and no? (not (spawn:collide? (. self.spawns B)))))
+        (set (. self :repeats A check) nil))))
 
 Spawner

@@ -2,6 +2,7 @@
 (local Spawner (require "src.spawner"))
 (local tickrate (/ 1 60))
 (var (dtick rectangleSpawner) (values 0 nil))
+(var spawned 0)
 
 (fn love.load [] (let [(w h) (love.graphics.getDimensions)]
   (love.window.updateMode w h {"vsync" false})
@@ -17,13 +18,17 @@
   (rectangleSpawner:update dt (> dtick tickrate))
   (when (> dtick tickrate) (set dtick (% dtick tickrate))))
 
+
 (fn love.draw []
   (love.graphics.setColor 1 1 1 1)
   (rectangleSpawner:draw)
   (love.graphics.setColor 0 1 0 1)
   (love.graphics.print (.. 
     "tick:\t" (/ (math.floor (* (/ dtick tickrate) 100)) 100)
-    "\nfps:\t" (love.timer.getFPS))))
+    "\nfps:\t" (love.timer.getFPS)
+      "\nspawned:\t" spawned
+      "\nonscreen:\t" (rectangleSpawner:onscreen))))
 
 (fn love.keypressed [key]
-  (when (= key :space) (rectangleSpawner:spawn)))
+  (when (= key :space) (rectangleSpawner:spawn))
+  (set spawned (+ spawned 1)))

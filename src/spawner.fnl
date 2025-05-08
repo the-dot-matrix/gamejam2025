@@ -45,14 +45,13 @@
             (and no? (not (spawn:collide? (. self.spawns B)))))
       (set (. self :repeat A check) nil))))
 
-(fn Spawner.onscreen [self]
-  (let [(w h) (love.graphics.getDimensions)]
-    (var onscreen 0)
-    (each [_ v (ipairs self.spawns)]
-      (if (and (and (> v.position.x 0) (< (+ v.position.x 50) w))
-              (and (> v.position.y 0) (< (+ v.position.y 75) h)))
-      (set onscreen (+ onscreen 1))
-      ))
-  onscreen))
+(fn Spawner.onscreen [self w h]
+  (let [inL     #(> $1.position.x 0)
+        inU     #(> $1.position.y 0)
+        inR     #(< (+ $1.position.x $1.size.x) w)
+        inB     #(< (+ $1.position.y $1.size.y) h)
+        inside  #(and (inL $1) (inU $1) (inR $1) (inB $1))]
+    (accumulate [sum 0 _ v (ipairs self.spawns)]
+      (if (inside v) (+ sum 1) sum))))
 
 Spawner

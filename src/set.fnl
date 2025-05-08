@@ -5,6 +5,9 @@
     (each [_ v (ipairs t)] (tset s v true))
     s))
 
+(fn Set.# [a b]
+  (accumulate [sum 0 _ k (pairs a)] (if k (+ sum 1) sum)))
+
 (fn Set.__add [a b]
   (let [res (Set.new {})]
     (each [k (pairs a)] (tset res k true))

@@ -12,12 +12,14 @@
         rectangle   {: size : position : velocity :mode :line}]
     (setmetatable rectangle self)))
 
-(fn Rectangle.update [self dt collides]
+(fn Rectangle.update [self dt]
   (when self.newvelocity
     (set self.velocity self.newvelocity)
     (set self.newvelocity nil))
-  (set self.position (+ self.position (* self.velocity dt)))
-  (when (and (> (length collides) 0) (> (self.velocity:mag) 0))
+  (set self.position (+ self.position (* self.velocity dt))))
+
+(fn Rectangle.solve [self dt collides]
+  (when (and (> (length collides) 0) (> (self.velocity:#) 0))
     (set self.newvelocity (self:bounces collides))
     (set self.mode :fill))
   (when (= (length collides) 0) (set self.mode :line)))
@@ -47,21 +49,14 @@
   (let [count (length collides)
         sum   (accumulate [sum 0 _ collide (ipairs collides)] 
                 (self:bounce collide sum))]
-    (Vector:new (self.velocity:mag) (/ sum count) true)))
+    (Vector:new (self.velocity:#) (/ sum count) true)))
 
 (fn Rectangle.bounce [self collide sum]
-  (let [fliphorz    (* self.velocity (Vector:new -1 1))
-        flipdiag    (* self.velocity (Vector:new -1 -1))
-        flipvert    (* self.velocity (Vector:new 1 -1))    
-        center      #(+ $1.position (/ $1.size 2))
-        direction   (- (center self) (center collide))
-        unitvector  (/ direction (direction:mag))
-        pushangle   (unitvector:polar)
-        moving?     (not= (collide.velocity:mag) 0)]
-    (case [moving? collide.size.x collide.size.y]
-      [true _ _]                  (+ sum pushangle)
-      (where [false x y] (< x y)) (+ sum (fliphorz:polar))
-      (where [false x y] (= x y)) (+ sum (flipdiag:polar))
-      (where [false x y] (> x y)) (+ sum (flipvert:polar)))))
+  (let [center  #(+ $1.position (/ $1.size 2))
+        push    (- (center self) (center collide))
+        reflect (self.velocity:orient push)]
+    (if (not= (collide.velocity:#) 0)
+      (+ sum (push:polar))
+      (+ sum (reflect:polar)))))
 
 Rectangle

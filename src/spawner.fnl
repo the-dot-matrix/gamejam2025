@@ -2,40 +2,47 @@
 (local Set (require "src.set"))
 
 (fn Spawner.new [self class]
-  (setmetatable {: class :spawns [] :repeats {}} self))
+  (setmetatable {: class :spawns [] :repeat [] :soft []} self))
 
 (fn Spawner.update [self dt tick?]
   (each [A spawn (ipairs self.spawns)]
-    (when tick? (self:resolve A spawn)) 
-    (self:solve dt tick? A spawn)))
+    (when (and tick? (. self.soft A)) (self:resolve A spawn))
+    (when (. self.soft A) (self:solve dt tick? A spawn))
+    (spawn:update dt)))
 
 (fn Spawner.draw [self]
   (each [_ spawn (ipairs self.spawns)] (spawn:draw)))
 
-(fn Spawner.spawn [self ...]
+(fn Spawner.spawn [self softORhard ...]
   (table.insert self.spawns (self.class:new ...))
-  (table.insert self.repeats {}))
+  (table.insert self.repeat {})
+  (table.insert self.soft softORhard))
 
 (fn Spawner.repeat? [self i check]
-  (accumulate [repeat? false k _ (pairs (. self.repeats i))]
-    (or repeat? (= check k))))
+  (accumulate [repeat? false k _ (pairs (. self.repeat i))]
+    (or repeat? (<= check k))))
 
 (fn Spawner.solve [self dt tick? A spawn]
-  (let [checks  (icollect [B other (ipairs self.spawns)]
-                  (when (not= A B) [B (spawn:collide? other)]))
-        check   (Set:new  (icollect [_ c (ipairs checks)]
-                            (when (. c 2) (. c 1))))
-        collides  (icollect [_ c (ipairs checks)] (. c 2))
-        repeat?   (self:repeat? A check)]
-    (if (or (not tick?) (= (length collides) 0) repeat?)
-        (spawn:update dt [])
-        (do (spawn:update dt collides)
-            (set (. self :repeats A check) true)))))
+  (let [check (icollect [B other (ipairs self.spawns)]
+                (when (not= A B) 
+                  [B (. self.soft B) (spawn:collide? other)]))
+        softs (Set:new  (icollect [_ c (ipairs check)]
+                          (when (and (. c 3) (. c 2)) 
+                            (. c 1))))
+        hards (icollect [_ c (ipairs check)] 
+                (when (not (. c 2)) (. c 3)))
+        all   (icollect [_ c (ipairs check)] (. c 3))
+        new?  (not (self:repeat? A softs))]
+    (when (and tick? (> (softs:#) 0) new?)
+      (spawn:solve dt all)
+      (when (> (softs:#) 0) 
+        (set (. self :repeat A softs) true)))
+    (spawn:solve dt hards)))
 
 (fn Spawner.resolve [self A spawn]
-  (each [check _ (pairs (. self :repeats A))]
+  (each [check _ (pairs (. self :repeat A))]
     (when (accumulate [no? true B v (pairs check)]
             (and no? (not (spawn:collide? (. self.spawns B)))))
-        (set (. self :repeats A check) nil))))
+      (set (. self :repeat A check) nil))))
 
 Spawner

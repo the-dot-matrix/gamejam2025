@@ -5,20 +5,27 @@
         y (if polar? (* (math.sin b) a) b)]
     (setmetatable {: x : y} self)))
 (fn Vector.polar [self] (math.atan2 self.y self.x))
+(fn Vector.# [self] (math.sqrt (+ (^ self.x 2) (^ self.y 2))))
+(fn Vector.unit [self] (/ self (self:#)))
 
-(fn Vector.mag [self] 
-  (math.sqrt (+ (^ self.x 2) (^ self.y 2))))
+(fn Vector.orient [self orientation]
+  (let [sign #(case [$2]
+                (where [v] (< v 0)) (* (math.abs $1) -1)
+                (where [v] (= v 0)) $1
+                (where [v] (> v 0)) (math.abs $1))
+        unit (orientation:unit)]
+    (Vector:new (sign self.x unit.x) (sign self.y unit.y))))
 
-(fn Vector.arithmetic [f op a b]
+(fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") vector by non-vector/scalar")]
     (case [(type a) (getmetatable a) (type b) (getmetatable b)]
       [:number _ _ Vector] (Vector:new (f a b.x) (f a b.y))
       [_ Vector :number _] (Vector:new (f a.x b) (f a.y b))
       [_ Vector _ Vector]  (Vector:new (f a.x b.x) (f a.y b.y))
       _ (error msg))))
-(fn Vector.__add [a b] (Vector.arithmetic #(+ $1 $2) :+ a b))
-(fn Vector.__sub [a b] (Vector.arithmetic #(- $1 $2) :- a b))
-(fn Vector.__mul [a b] (Vector.arithmetic #(* $1 $2) :* a b))
-(fn Vector.__div [a b] (Vector.arithmetic #(/ $1 $2) :/ a b))
+(fn Vector.__add [a b] (arithmetic #(+ $1 $2) :+ a b))
+(fn Vector.__sub [a b] (arithmetic #(- $1 $2) :- a b))
+(fn Vector.__mul [a b] (arithmetic #(* $1 $2) :* a b))
+(fn Vector.__div [a b] (arithmetic #(/ $1 $2) :/ a b))
 
 Vector

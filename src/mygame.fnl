@@ -7,10 +7,10 @@
   (love.window.updateMode w h {"vsync" false})
   (love.graphics.setFont (love.graphics.newFont 16))
   (set rectangleSpawner (Spawner:new Rectangle))
-  (rectangleSpawner:spawn (- 0 w) (- 5 0) (+ w 5) (- h 10) 0)
-  (rectangleSpawner:spawn (- w 5) (- 5 0) (+ w 5) (- h 10) 0)
-  (rectangleSpawner:spawn (+ 0 0) (- 0 h) (+ w 0) (+ h 5) 0)
-  (rectangleSpawner:spawn (+ 0 0) (- h 5) (+ w 0) (+ h 5) 0)))
+  (rectangleSpawner:spawn false (- 0 w) 0 (+ w 20) h 0)
+  (rectangleSpawner:spawn false (- w 20) 0 (+ w 20) h 0)
+  (rectangleSpawner:spawn false 0 (- 0 h) w (+ h 20) 0)
+  (rectangleSpawner:spawn false 0 (- h 20) w (+ h 20) 0)))
 
 (fn love.update [dt]
   (set dtick (+ dtick dt))
@@ -21,9 +21,7 @@
   (love.graphics.setColor 1 1 1 1)
   (rectangleSpawner:draw)
   (love.graphics.setColor 0 1 0 1)
-  (love.graphics.print (.. 
-    "tick:\t" (/ (math.floor (* (/ dtick tickrate) 100)) 100)
-    "\nfps:\t" (love.timer.getFPS))))
+  (love.graphics.print (.. "\t fps: " (love.timer.getFPS))))
 
 (fn love.keypressed [key]
-  (when (= key :space) (rectangleSpawner:spawn)))
+  (when (= key :space) (rectangleSpawner:spawn true)))

@@ -5,11 +5,11 @@
 
 (fn Spawner.update [self dt tick?]
   (each [A spawn (ipairs self.spawns)] 
-    (spawn:update dt self.query?)))
+    (when spawn.update (spawn:update dt self.query?))))
 
 (fn Spawner.draw [self scale]
   (each [_ spawn (ipairs self.spawns)] 
-    (spawn:draw scale)))
+    (when spawn.draw (spawn:draw scale))))
 
 (fn Spawner.spawn [self ...]
   (table.insert self.spawns (self.class:new ...)))

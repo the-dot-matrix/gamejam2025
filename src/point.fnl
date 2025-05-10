@@ -9,10 +9,9 @@
 (fn Point.unit [self] (/ self (self:#)))
 
 (fn Point.sign [self]
-  (let [sign #(case [$1]
-                (where [v] (< v 0)) -1
-                (where [v] (= v 0)) 0
-                (where [v] (> v 0)) 1)]
+  (let [sign #(case [$1]  (where [v] (< v 0)) -1
+                          (where [v] (= v 0)) 0
+                          (where [v] (> v 0)) 1)]
     (Point:new (sign self.x) (sign self.y))))
 
 (fn arithmetic [f op a b]

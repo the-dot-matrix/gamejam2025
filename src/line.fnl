@@ -2,12 +2,13 @@
 (local Line {}) (set Line.__index Line)
 
 (fn Line.new [self x1 y1 x2 y2]
-  (let [a (Point:new x1 y1)
-        b (Point:new x2 y2)
-        w (if (< a.x b.x) {: a : b} {:a b :b a})]
-    (setmetatable w self)))
-
-(fn Line.update [self])
+  (let [(a b) (values (Point:new x1 y1) (Point:new x2 y2))
+        line  (if (< a.x b.x) {: a : b} {:a b :b a})]
+    (setmetatable line self)))
+(fn Line.para [self]
+  (Point:new (- self.b.x self.a.x) (- self.b.y self.a.y)))
+(fn Line.perp [self]
+  (Point:new (- self.b.y self.a.y) (- self.a.x self.b.x)))
 
 (fn Line.draw [self scale]
   (love.graphics.line 
@@ -15,12 +16,11 @@
     (* self.b.x scale) (* self.b.y scale)))
 
 (fn Line.intersect? [self Ba Bb Bsize]
-  (let [normal    (Point:new (- self.b.y self.a.y)
-                            (- self.a.x self.b.x))
-        normunit  (* (normal:unit) Bsize 4)
-        Bouter    (* (Point:new Bsize (normunit:polar) true))
-        Ba        (- Ba Bouter)
-        Bb        (+ Bb Bouter)
+  (let [perp      (self:perp)
+        normal    (* (perp:unit) Bsize 4)
+        ;Bouter    (Point:new Bsize (normal:polar) true)
+        ;Ba        (- Ba Bouter)
+        ;Bb        (+ Bb Bouter)
         x1x2      (- self.a.x self.b.x)
         y1y2      (- self.a.y self.b.y)
         x1x3      (- self.a.x Ba.x)
@@ -35,7 +35,7 @@
         ux        (+ Ba.x (* u (- Bb.x Ba.x)))
         uy        (+ Ba.y (* u (- Bb.y Ba.y)))]
     (when (and (<= 0 t) (<= t 1) (<= 0 u) (<= u 1))
-      (Line:new tx ty (+ tx normunit.x) (+ ty normunit.y)))))
+      (Line:new tx ty (+ tx normal.x) (+ ty normal.y)))))
 
 (fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") line by non-line/number")]

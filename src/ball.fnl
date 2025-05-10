@@ -9,19 +9,29 @@
 (local ztheta (* (/ 6 360) 2 math.pi))
 
 (fn Ball.new [self x y pocket?]
-  (let [pos (Point:new x y)
-        vel (Point:new 0 0)
-        radius (or (. sizes pocket?) ballcm)]
+  (let [radius  (or (. sizes pocket?) ballcm)
+        pos     (Point:new x y)
+        vel     (Point:new 0 0)]
     (setmetatable {: radius : pos : vel : pocket?} self)))
 
 (fn Ball.update [self dt intersect?] (when (not self.pocket?)
-  (let [newpos  (+ self.pos (* self.vel dt))
-        walls   (intersect? self.pos newpos self.radius)
-        newvel  (+ self.vel.y (* (self:force ztheta) dt))]
+  (let [newpos    (+ self.pos (* self.vel dt))
+        walls     (intersect? self.pos newpos self.radius)
+        zf        (Ball:force ztheta)
+        normal    (when self.push? (self.push?:para))
+        roll      (when self.push? (self.push?:perp))
+        pf        (when normal (self:force (normal:polar) zf))
+        accel     (if pf (Point:new pf (* 1 (roll:polar)) true)
+                         (Point:new zf (/ math.pi 2) true))
+        newvel  (+ self.vel (* accel dt))]
+    (set self.vel newvel)
+    (when (and self.push? (not= (normal:polar) 0) 
+                          (not= (roll:polar) 0))
+      (set self.vel 
+        (Point:new (* -1 (self.vel:#)) (roll:polar) true)))
     (if (= (length walls) 0) 
-        (do (set self.pos newpos) 
-            (set self.vel.y newvel))
-        (set self.bounce (* (/ 1 (length walls))
+        (set (self.pos self.push?) (values newpos nil))
+        (set self.push? (* (/ 1 (length walls))
           (accumulate [n (Line:new 0 0 0 0) _ c (ipairs walls)]
             (+ n c))))))))
 
@@ -36,17 +46,19 @@
     _   (values (* 0.0 math.pi) (* 2.0 math.pi))))
   (love.graphics.arc :line (* s self.pos.x) (* s self.pos.y) 
     (* s self.radius) angle1 angle2)
-  (when self.bounce 
-    (love.graphics.setColor 1 0 0 1)
-    (self.bounce:draw s)
-    (love.graphics.setColor 1 1 1 1)))
+  (love.graphics.setColor 1 0 0 1)
+  (local vel (Line:new self.pos.x self.pos.y
+    (+ self.pos.x self.vel.x) (+ self.pos.y self.vel.y)))
+  (vel:draw s)
+  (love.graphics.setColor 0 0 1 1)
+  (when self.push? (self.push?:draw s))
+  (love.graphics.setColor 1 1 1 1))
 
-(fn Ball.force [self theta]
-  (let [gravity   (* m g)
-        normal    (* -1 gravity (math.cos theta))
+(fn Ball.force [self theta gravity?]
+  (let [gravity   (* m (or gravity? g))
+        normal    (* gravity (math.cos theta))
         net       (* gravity (math.sin theta))
-        friction  (* normal mu)
-        total     (+ net friction)]
-    (/ total m)))
+        friction  (* normal mu)]
+    (/ (- net friction) m)))
 
 Ball

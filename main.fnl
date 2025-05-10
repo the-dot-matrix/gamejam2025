@@ -41,7 +41,9 @@
   (walls:spawn 
     0 0 (/ playarea.x 2) (* playarea.y 0.8))
   (walls:spawn 
-    (/ playarea.x 2) (* playarea.y 0.8) playarea.x 0))
+    (/ playarea.x 2) (* playarea.y 0.8) playarea.x 0)
+  ; end testing
+  )
 
 (fn love.update [dt] 
   (walls:update dt)

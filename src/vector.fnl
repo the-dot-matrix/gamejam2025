@@ -8,13 +8,12 @@
 (fn Vector.# [self] (math.sqrt (+ (^ self.x 2) (^ self.y 2))))
 (fn Vector.unit [self] (/ self (self:#)))
 
-(fn Vector.orient [self orientation]
-  (let [sign #(case [$2]
-                (where [v] (< v 0)) (* (math.abs $1) -1)
-                (where [v] (= v 0)) $1
-                (where [v] (> v 0)) (math.abs $1))
-        unit (orientation:unit)]
-    (Vector:new (sign self.x unit.x) (sign self.y unit.y))))
+(fn Vector.sign [self]
+  (let [sign #(case [$1]
+                (where [v] (< v 0)) -1
+                (where [v] (= v 0)) 0
+                (where [v] (> v 0)) 1)]
+    (Vector:new (sign self.x) (sign self.y))))
 
 (fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") vector by non-vector/scalar")]

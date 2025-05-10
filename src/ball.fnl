@@ -1,6 +1,6 @@
 (local Ball {}) (set Ball.__index Ball)
-(local Vector (require "src.vector"))
-(local Wall (require "src.wall"))
+(local Point (require "src.point"))
+(local Line (require "src.line"))
 (local ballradiusin (/ 2.25 2))
 (local ballradiuscm (* ballradiusin 2.54))
 (local cornerpocket (* ballradiuscm 2.25))
@@ -17,19 +17,19 @@
 (local ftotal (+ fnet ffric))
 (local a (/ ftotal m))
 (fn Ball.new [self x y pocket?]
-  (let [pos (Vector:new x y)
-        vel (Vector:new 0 0)
+  (let [pos (Point:new x y)
+        vel (Point:new 0 0)
         radius (or (. sizes pocket?) ballradiuscm)]
     (setmetatable {: radius : pos : vel : pocket?} self)))
 
 (fn Ball.update [self dt intersect?] (when (not self.pocket?)
   (let [newpos  (+ self.pos (* self.vel dt))
-        walls   (intersect? self.pos newpos self.radius)]
-    (if (= (length walls) 0) 
+        lines   (intersect? self.pos newpos self.radius)]
+    (if (= (length lines) 0) 
         (do (set self.pos newpos) 
             (set self.vel.y (+ self.vel.y (* a dt))))
-        (set self.bounce (* (/ 1 (length walls))
-          (accumulate [w (Wall:new 0 0 0 0) _ c (ipairs walls)]
+        (set self.bounce (* (/ 1 (length lines))
+          (accumulate [w (Line:new 0 0 0 0) _ c (ipairs lines)]
             (+ w c))))))))
 
 (fn Ball.draw [self s]

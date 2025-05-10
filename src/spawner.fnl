@@ -1,5 +1,4 @@
 (local Spawner {}) (set Spawner.__index Spawner)
-(local Set (require "src.set"))
 
 (fn Spawner.new [self class query?]
   (setmetatable {: class :spawns [] : query?} self))

@@ -1,4 +1,4 @@
-(local Point (require :src.point))
+(local Vec (require :src.vec))
 (local Line (require :src.line))
 (local Ball {}) (set Ball.__index Ball)
 (local ballin (/ 2.25 2))
@@ -10,8 +10,8 @@
 
 (fn Ball.new [self x y pocket?]
   (let [radius  (or (. sizes pocket?) ballcm)
-        pos     (Point:new x y)
-        vel     (Point:new 0 0)]
+        pos     (Vec:new x y)
+        vel     (Vec:new 0 0)]
     (setmetatable {: radius : pos : vel : pocket?} self)))
 
 (fn Ball.update [self dt intersect?] (when (not self.pocket?)
@@ -21,14 +21,14 @@
         normal    (when self.push? (self.push?:para))
         roll      (when self.push? (self.push?:perp))
         pf        (when normal (self:force (normal:polar) zf))
-        accel     (if pf (Point:new pf (* 1 (roll:polar)) true)
-                         (Point:new zf (/ math.pi 2) true))
+        accel     (if pf (Vec:new pf (* 1 (roll:polar)) true)
+                         (Vec:new zf (/ math.pi 2) true))
         newvel  (+ self.vel (* accel dt))]
     (set self.vel newvel)
     (when (and self.push? (not= (normal:polar) 0) 
                           (not= (roll:polar) 0))
       (set self.vel 
-        (Point:new (* -1 (self.vel:#)) (roll:polar) true)))
+        (Vec:new (* -1 (self.vel:#)) (roll:polar) true)))
     (if (= (length walls) 0) 
         (set (self.pos self.push?) (values newpos nil))
         (set self.push? (* (/ 1 (length walls))

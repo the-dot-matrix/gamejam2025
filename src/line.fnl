@@ -1,14 +1,14 @@
-(local Point (require :src.point))
+(local Vec (require :src.vec))
 (local Line {}) (set Line.__index Line)
 
 (fn Line.new [self x1 y1 x2 y2]
-  (let [(a b) (values (Point:new x1 y1) (Point:new x2 y2))
+  (let [(a b) (values (Vec:new x1 y1) (Vec:new x2 y2))
         line  (if (< a.x b.x) {: a : b} {:a b :b a})]
     (setmetatable line self)))
 (fn Line.para [self]
-  (Point:new (- self.b.x self.a.x) (- self.b.y self.a.y)))
+  (Vec:new (- self.b.x self.a.x) (- self.b.y self.a.y)))
 (fn Line.perp [self]
-  (Point:new (- self.b.y self.a.y) (- self.a.x self.b.x)))
+  (Vec:new (- self.b.y self.a.y) (- self.a.x self.b.x)))
 
 (fn Line.draw [self scale]
   (love.graphics.line 
@@ -18,7 +18,7 @@
 (fn Line.intersect? [self Ba Bb Bsize]
   (let [perp      (self:perp)
         normal    (* (perp:unit) Bsize 4)
-        ;Bouter    (Point:new Bsize (normal:polar) true)
+        ;Bouter    (Vec:new Bsize (normal:polar) true)
         ;Ba        (- Ba Bouter)
         ;Bb        (+ Bb Bouter)
         x1x2      (- self.a.x self.b.x)

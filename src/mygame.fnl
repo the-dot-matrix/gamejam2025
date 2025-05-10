@@ -63,7 +63,6 @@
   (love.graphics.translate 
     (/ (- (screen:getWidth) (game:getWidth)) 2) 
     (/ (- (screen:getHeight) (game:getHeight)) 2))
-  (love.graphics.setColor 1 1 1 1)
   (love.graphics.draw game)
   (love.graphics.pop)
   (love.graphics.setCanvas)
@@ -73,7 +72,8 @@
   (love.graphics.pop)
   (love.graphics.setColor 0 1 0 1)
   (love.graphics.print (..  
-    "fps:" (love.timer.getFPS))))
+    "fps:" (love.timer.getFPS)))
+  (love.graphics.setColor 1 1 1 1))
 
 (fn love.keypressed [key]
   (balls:spawn 

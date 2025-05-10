@@ -1,5 +1,6 @@
 (local Ball {}) (set Ball.__index Ball)
 (local Vector (require "src.vector"))
+(local Wall (require "src.wall"))
 (local ballradiusin (/ 2.25 2))
 (local ballradiuscm (* ballradiusin 2.54))
 (local cornerpocket (* ballradiuscm 2.25))
@@ -21,20 +22,17 @@
         radius (or (. sizes pocket?) ballradiuscm)]
     (setmetatable {: radius : pos : vel : pocket?} self)))
 
-(fn Ball.update [self dt intersect?]
+(fn Ball.update [self dt intersect?] (when (not self.pocket?)
   (let [newpos  (+ self.pos (* self.vel dt))
-        outer   (* self.radius (self.vel:sign))
         walls   (intersect? self.pos newpos self.radius)]
-    (when (not self.pocket?)
-      (if (= (length walls) 0) 
+    (if (= (length walls) 0) 
         (do (set self.pos newpos) 
-            (set self.vel.y (+ self.vel.y (* a dt 1))))
-        (set self.pos (* (/ 1 (length walls))
-          (accumulate [v (Vector:new 0 0) _ p (ipairs walls)]
-            (+ v p))))))))
+            (set self.vel.y (+ self.vel.y (* a dt))))
+        (set self.bounce (* (/ 1 (length walls))
+          (accumulate [w (Wall:new 0 0 0 0) _ c (ipairs walls)]
+            (+ w c))))))))
 
 (fn Ball.draw [self s]
-  (love.graphics.setColor 1 1 1 1)
   (local (angle1 angle2) (case self.pocket?
     :UL (values (* 0.0 math.pi) (* 0.5 math.pi))
     :UR (values (* 0.5 math.pi) (* 1.0 math.pi))
@@ -44,6 +42,10 @@
     :DR (values (* 1.0 math.pi) (* 1.5 math.pi))
     _   (values (* 0.0 math.pi) (* 2.0 math.pi))))
   (love.graphics.arc :line (* s self.pos.x) (* s self.pos.y) 
-    (* s self.radius) angle1 angle2))
+    (* s self.radius) angle1 angle2)
+  (when self.bounce 
+    (love.graphics.setColor 1 0 0 1)
+    (self.bounce:draw s)
+    (love.graphics.setColor 1 1 1 1)))
 
 Ball

@@ -1,6 +1,6 @@
 (local Ball {}) (set Ball.__index Ball)
-(local Point (require "src.point"))
-(local Line (require "src.line"))
+(local Point (require :src.point))
+(local Line (require :src.line))
 (local ballradiusin (/ 2.25 2))
 (local ballradiuscm (* ballradiusin 2.54))
 (local cornerpocket (* ballradiuscm 2.25))

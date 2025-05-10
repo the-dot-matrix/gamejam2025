@@ -1,7 +1,7 @@
-(local Point (require "src.point"))
-(local Spawner (require "src.spawner"))
-(local Line (require "src.line"))
-(local Ball (require "src.ball"))
+(local Point (require :src.point))
+(local Spawner (require :src.spawner))
+(local Line (require :src.line))
+(local Ball (require :src.ball))
 (local playarea (Point:new 116 232))
 (local border (Point:new 10 10))
 (var (cmpx game screen pxpx) (values nil nil nil nil))
@@ -18,7 +18,7 @@
         convert (/ render units)
         ratio   (math.min convert.x convert.y)
         pixels  (* units ratio)]
-    (love.window.updateMode window.x window.y {"vsync" false})
+    (love.window.updateMode window.x window.y {:vsync false})
     (love.graphics.setDefaultFilter :nearest :nearest 0)
     (love.graphics.setFont (love.graphics.newFont 16))
     (set pxpx scale)
@@ -72,7 +72,7 @@
   (love.graphics.pop)
   (love.graphics.setColor 0 1 0 1)
   (love.graphics.print (..  
-    "fps:" (love.timer.getFPS)))
+    :fps: (love.timer.getFPS)))
   (love.graphics.setColor 1 1 1 1))
 
 (fn love.keypressed [key]

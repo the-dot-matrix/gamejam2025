@@ -1,5 +1,5 @@
 (local Line {}) (set Line.__index Line)
-(local Point (require "src.point"))
+(local Point (require :src.point))
 
 (fn Line.new [self x1 y1 x2 y2]
   (let [a (Point:new x1 y1)

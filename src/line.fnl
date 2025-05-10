@@ -44,8 +44,8 @@
         (f a b.a.x) (f a b.a.y) 
         (f a b.b.x) (f a b.b.y))
       [_ Line :number _] (Line:new
-        (f a b.a.x) (f a b.a.y) 
-        (f a b.b.x) (f a b.b.y))
+        (f a.a.x b) (f a.a.y b) 
+        (f a.b.x b) (f a.b.y b))
       [_ Line _ Line] (Line:new 
         (f a.a.x b.a.x) (f a.a.y b.a.y)
         (f a.b.x b.b.x) (f a.b.y b.b.y))

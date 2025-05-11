@@ -18,9 +18,8 @@
 (fn Line.intersect? [self Ba Bb Bsize]
   (let [perp      (self:perp)
         normal    (* (perp:unit) Bsize 4)
-        ;Bouter    (Vec:new Bsize (normal:polar) true)
-        ;Ba        (- Ba Bouter)
-        ;Bb        (+ Bb Bouter)
+        Bouter    (Vec:new Bsize (normal:polar) true)
+        Bb        (- Bb Bouter)
         x1x2      (- self.a.x self.b.x)
         y1y2      (- self.a.y self.b.y)
         x1x3      (- self.a.x Ba.x)

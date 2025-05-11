@@ -9,9 +9,8 @@
 (local ztheta (* (/ 6 360) 2 math.pi))
 
 (fn Ball.new [self x y pocket?]
-  (let [radius  (or (. sizes pocket?) ballcm)
-        pos     (Vec:new x y)
-        vel     (Vec:new 0 0)]
+  (let [radius    (or (. sizes pocket?) ballcm)
+        (pos vel) (values (Vec:new x y) (Vec:new 0 0))]
     (setmetatable {: radius : pos : vel : pocket?} self)))
 
 (fn Ball.update [self dt intersect?] (when (not self.pocket?)
@@ -23,16 +22,15 @@
         mag   (* -1 (self.vel:#))
         accel (if n (Vec:new (self:force (n:polar) (* -1 fz)))
                              (Vec:new fz (/ math.pi 2) true))]
-    (when self.push? 
-      (if (= (r:polar) 0)
-        (set self.vel (Vec:new 0 0))
-        (set self.vel (Vec:new mag (r:polar) true))))
+    (when self.push? (if (= (r:polar) 0)
+      (set self.vel (Vec:new 0 0))
+      (set self.vel (Vec:new mag (r:polar) true))))
     (set self.vel (+ self.vel (* accel dt)))
     (if (= (length walls) 0) 
-        (set (self.pos self.push?) (values newp nil))
-        (set self.push? (* (/ 1 (length walls))
-          (accumulate [n (Line:new 0 0 0 0) _ c (ipairs walls)]
-            (+ n c))))))))
+      (set (self.pos self.push?) (values newp nil))
+      (set self.push? (* (/ 1 (length walls))
+        (accumulate [n (Line:new 0 0 0 0) _ c (ipairs walls)]
+          (+ n c))))))))
 
 (fn Ball.draw [self s]
   (local (angle1 angle2) (case self.pocket?

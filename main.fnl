@@ -39,9 +39,9 @@
   (balls:spawn playarea.x playarea.y :DR)
   ; testing collisions
   (walls:spawn 
-    0 0 (/ playarea.x 2) (* playarea.y 0.8))
+    0 0 (* playarea.x 0.4) (* playarea.y 0.8))
   (walls:spawn 
-    (/ playarea.x 2) (* playarea.y 0.8) playarea.x 0)
+    (* playarea.x 0.6) (* playarea.y 0.8) playarea.x 0)
   ; end testing
   )
 

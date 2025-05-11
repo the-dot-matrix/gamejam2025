@@ -15,22 +15,21 @@
     (setmetatable {: radius : pos : vel : pocket?} self)))
 
 (fn Ball.update [self dt intersect?] (when (not self.pocket?)
-  (let [newpos    (+ self.pos (* self.vel dt))
-        walls     (intersect? self.pos newpos self.radius)
-        zf        (Ball:force ztheta)
-        normal    (when self.push? (self.push?:para))
-        roll      (when self.push? (self.push?:perp))
-        pf        (when normal (self:force (normal:polar) zf))
-        accel     (if pf (Vec:new pf (* 1 (roll:polar)) true)
-                         (Vec:new zf (/ math.pi 2) true))
-        newvel  (+ self.vel (* accel dt))]
-    (set self.vel newvel)
-    (when (and self.push? (not= (normal:polar) 0) 
-                          (not= (roll:polar) 0))
-      (set self.vel 
-        (Vec:new (* -1 (self.vel:#)) (roll:polar) true)))
+  (let [newp  (+ self.pos (* self.vel dt))
+        walls (intersect? self.pos newp self.radius)
+        fz    (Ball:force ztheta)
+        n     (when self.push? (self.push?:para))
+        r     (when self.push? (self.push?:perp))
+        mag   (* -1 (self.vel:#))
+        accel (if n (Vec:new (self:force (n:polar) (* -1 fz)))
+                             (Vec:new fz (/ math.pi 2) true))]
+    (when self.push? 
+      (if (= (r:polar) 0)
+        (set self.vel (Vec:new 0 0))
+        (set self.vel (Vec:new mag (r:polar) true))))
+    (set self.vel (+ self.vel (* accel dt)))
     (if (= (length walls) 0) 
-        (set (self.pos self.push?) (values newpos nil))
+        (set (self.pos self.push?) (values newp nil))
         (set self.push? (* (/ 1 (length walls))
           (accumulate [n (Line:new 0 0 0 0) _ c (ipairs walls)]
             (+ n c))))))))
@@ -56,9 +55,9 @@
 
 (fn Ball.force [self theta gravity?]
   (let [gravity   (* m (or gravity? g))
-        normal    (* gravity (math.cos theta))
         net       (* gravity (math.sin theta))
+        normal    (* gravity (math.cos theta))
         friction  (* normal mu)]
-    (/ (- net friction) m)))
+    (values (/ (- net friction) m) (/ net m 1))))
 
 Ball

@@ -1,6 +1,7 @@
 (local Vec (require :src.vec))
 (local Line (require :src.line))
 (local Ball {}) (set Ball.__index Ball)
+(local debug false)
 (local ballin (/ 2.25 2))
 (local ballcm (* ballin 2.54))
 (local (crn mid) (values (* ballcm 2.25) (* ballcm 1.75)))
@@ -16,12 +17,12 @@
 (fn Ball.update [self dt intersect?] (when (not self.pocket?)
   (let [newp  (+ self.pos (* self.vel dt))
         walls (intersect? self.pos newp self.radius)
-        fz    (Ball:force ztheta)
+        fz    (Ball:accel ztheta)
         n     (when self.push? (self.push?:para))
         r     (when self.push? (self.push?:perp))
-        mag   (* -1 (self.vel:#))
-        accel (if n (Vec:new (self:force (n:polar) (* -1 fz)))
-                             (Vec:new fz (/ math.pi 2) true))]
+        accel (if n (Vec:new (self:accel (n:polar) (* -1 fz)))
+                    (Vec:new 0 fz))
+        mag   (* -1 (self.vel:#))]
     (when self.push? (if (= (r:polar) 0)
       (set self.vel (Vec:new 0 0))
       (set self.vel (Vec:new mag (r:polar) true))))
@@ -43,15 +44,16 @@
     _   (values (* 0.0 math.pi) (* 2.0 math.pi))))
   (love.graphics.arc :line (* s self.pos.x) (* s self.pos.y) 
     (* s self.radius) angle1 angle2)
-  (love.graphics.setColor 1 0 0 1)
-  (local vel (Line:new self.pos.x self.pos.y
-    (+ self.pos.x self.vel.x) (+ self.pos.y self.vel.y)))
-  (vel:draw s)
-  (love.graphics.setColor 0 0 1 1)
-  (when self.push? (self.push?:draw s))
-  (love.graphics.setColor 1 1 1 1))
+  (when debug
+    (love.graphics.setColor 1 0 0 1)
+    (local vel (Line:new self.pos.x self.pos.y
+      (+ self.pos.x self.vel.x) (+ self.pos.y self.vel.y)))
+    (vel:draw s)
+    (love.graphics.setColor 0 0 1 1)
+    (when self.push? (self.push?:draw s))
+    (love.graphics.setColor 1 1 1 1)))
 
-(fn Ball.force [self theta gravity?]
+(fn Ball.accel [self theta gravity?]
   (let [gravity   (* m (or gravity? g))
         net       (* gravity (math.sin theta))
         normal    (* gravity (math.cos theta))

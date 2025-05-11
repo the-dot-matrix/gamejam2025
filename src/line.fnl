@@ -48,6 +48,8 @@
       [_ Line _ Line] (Line:new 
         (f a.a.x b.a.x) (f a.a.y b.a.y)
         (f a.b.x b.b.x) (f a.b.y b.b.y))
+      [_ Line :nil _] a
+      [:nil _ _ Line] b
       _ (error msg))))
 (fn Line.__add [a b] (arithmetic #(+ $1 $2) :+ a b))
 (fn Line.__sub [a b] (arithmetic #(- $1 $2) :- a b))

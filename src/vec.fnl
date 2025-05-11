@@ -19,7 +19,9 @@
     (case [(type a) (getmetatable a) (type b) (getmetatable b)]
       [:number _ _ Vec] (Vec:new (f a b.x) (f a b.y))
       [_ Vec :number _] (Vec:new (f a.x b) (f a.y b))
-      [_ Vec _ Vec]  (Vec:new (f a.x b.x) (f a.y b.y))
+      [_ Vec _ Vec]     (Vec:new (f a.x b.x) (f a.y b.y))
+      [_ Vec :nil _]    a
+      [:nil _ _ Vec]    b
       _ (error msg))))
 (fn Vec.__add [a b] (arithmetic #(+ $1 $2) :+ a b))
 (fn Vec.__sub [a b] (arithmetic #(- $1 $2) :- a b))

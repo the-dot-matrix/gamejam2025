@@ -1,7 +1,8 @@
 (local Vec {}) (set Vec.__index Vec)
 
 (fn Vec.new [self a b polar?]
-  (let [x (if polar? (* (math.cos b) a) a)
+  (let [(a b) (values (or a 0) (or b 0))
+        x (if polar? (* (math.cos b) a) a)
         y (if polar? (* (math.sin b) a) b)]
     (setmetatable {: x : y} self)))
 (fn Vec.polar [self] (math.atan2 self.y self.x))
@@ -13,6 +14,11 @@
                           (where [v] (= v 0)) 0
                           (where [v] (> v 0)) 1)]
     (Vec:new (sign self.x) (sign self.y))))
+
+(fn Vec.line [self other]
+  (local Line (require :src.line))
+  (Line:new ;; TODO calculate perpendicular to normal sanely
+  self.x self.y (+ self.x other.x) (+ self.y other.y)))
 
 (fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") vector by non-vector/number")]

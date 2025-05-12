@@ -6,11 +6,11 @@
         gravity   (* M (or gravity? G))
         net       (* gravity (math.sin theta))
         normal    (* gravity (math.cos theta))
-        friction  (math.min net (* normal MU))]
+        friction  (* normal  MU)]
     (values (/ (- net friction) M) (/ net M))))
 
 (fn Phys.acc [v dt norm?]
-  (let [z (Phys.force (* (/ 6 360) 2 math.pi)) 
+  (let [z (Phys.force (* (/ 6 360) 2 math.pi))
         g (Vec:new 0 z)
         i (when norm? (Vec:new (Phys.force (norm?:polar) z)))
         b (when norm? (* norm? (/ (v:#) 5) (/ 0.8 dt)))]

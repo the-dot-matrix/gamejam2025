@@ -1,6 +1,6 @@
 (local Vec (require :src.vec))
 (local Line (require :src.line))
-(local Physics (require :src.physics))
+(local Phys (require :src.phys))
 (local Ball {}) (set Ball.__index Ball)
 (local debug false)
 (local ballin (/ 2.25 2))
@@ -15,11 +15,11 @@
 
 (fn Ball.update [! dt walls?] (when (not !.pocket?)
   (let [tang (when !.norm (Line.normal (Line:new !.p !.norm)))]
-    (set !.a (Physics.acc !.v dt !.norm tang))
-    (set !.v (Physics.vel !.v !.a dt tang))
-    (set !.p (Physics.pos !.p !.v dt))
-    (set !.norm (Physics.avg 
-      (walls? !.p (Physics.pos !.p !.v dt) !.radius))))))
+    (set !.a (Phys.acc !.v dt !.norm tang))
+    (set !.v (Phys.vel !.v !.a dt tang))
+    (set !.p (Phys.pos !.p !.v dt))
+    (set !.norm (Phys.avg 
+      (walls? !.p (Phys.pos !.p !.v dt) !.radius))))))
 
 (fn Ball.draw [! s]
   (local (angle1 angle2) (case !.pocket?

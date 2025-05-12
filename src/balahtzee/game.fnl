@@ -1,6 +1,6 @@
 (local Vec (require :src.vec))
 (local Line (require :src.line))
-(local Ball (require :src.ball))
+(local Ball (require :src.balahtzee.ball))
 (local Spawner (require :src.spawner))
 (local Game {}) (set Game.__index Game)
 

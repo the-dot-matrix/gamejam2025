@@ -1,6 +1,6 @@
 (local Vec (require :src.vec))
 (local Line (require :src.line))
-(local Phys (require :src.phys))
+(local Phys (require :src.balahtzee.phys))
 (local Ball {}) (set Ball.__index Ball)
 
 (fn Ball.new [! x y pocket?]

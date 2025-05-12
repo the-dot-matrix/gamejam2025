@@ -1,4 +1,4 @@
-(local Game (require :src.game))
+(local Game (require :src.balahtzee.game))
 (local Vec (require :src.vec))
 (local Screen {}) (set Screen.__index Screen)
 

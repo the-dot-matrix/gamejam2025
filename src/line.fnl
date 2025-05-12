@@ -8,10 +8,8 @@
         line  (if (< a.x b.x) {: a : b} {:a b :b a})]
     (setmetatable line !)))
 
-(fn Line.⊥ [!]
-  (let [v (Vec:new  (- !.b.y !.a.y) 
-                    (- !.a.x !.b.x))]
-    (v:unit)))
+(fn Line.normal [!]
+  (let [v (Vec:new (- !.b.y !.a.y) (- !.a.x !.b.x))] (v:unit)))
 
 (fn Line.draw [! scale]
   (love.graphics.line 
@@ -19,8 +17,8 @@
     (* !.b.x scale) (* !.b.y scale)))
 
 (fn Line.intersect? [! Ba Bb Bsize]
-  (let [⊥       (!:⊥)
-        Bb      (- Bb (Vec:new Bsize (⊥:polar) true))
+  (let [normal  (!:normal)
+        Bb      (- Bb (Vec:new Bsize (normal:polar) true))
         x1x2    (- !.a.x !.b.x)
         y1y2    (- !.a.y !.b.y)
         x1x3    (- !.a.x Ba.x)
@@ -34,6 +32,6 @@
         ty      (+ !.a.y (* t (- !.b.y !.a.y)))
         ux      (+ Ba.x (* u (- Bb.x Ba.x)))
         uy      (+ Ba.y (* u (- Bb.y Ba.y)))]
-    (when (and (<= 0 t) (<= t 1) (<= 0 u) (<= u 1)) ⊥)))
+    (when (and (<= 0 t) (<= t 1) (<= 0 u) (<= u 1)) normal)))
 
 Line

@@ -2,14 +2,14 @@
 (local Line (require :src.line))
 (local Phys (require :src.phys))
 (local Ball {}) (set Ball.__index Ball)
-(local debug false)
-(local ballin (/ 2.25 2))
-(local ballcm (* ballin 2.54))
-(local (crn mid) (values (* ballcm 2.25) (* ballcm 1.75)))
-(local sizes {:UL crn :UR crn :ML mid :MR mid :DL crn :DR crn})
+(local DEBUG false)
 
 (fn Ball.new [! x y pocket?]
-  (let [radius  (or (. sizes pocket?) ballcm)
+  (let [ballin  (/ 2.25 2)
+        ballcm  (* ballin 2.54)
+        (crn mid) (values (* ballcm 2.25) (* ballcm 1.75))
+        sizes {:UL crn :UR crn :ML mid :MR mid :DL crn :DR crn}
+        radius  (or (. sizes pocket?) ballcm)
         (p v a) (values (Vec:new x y) (Vec:new) (Vec:new))]
     (setmetatable {: radius : p : v : a : pocket?} !)))
 
@@ -32,7 +32,7 @@
     _   (values (* 0.0 math.pi) (* 2.0 math.pi))))
   (love.graphics.arc :line (* s !.p.x) (* s !.p.y) 
     (* s !.radius) angle1 angle2)
-  (when debug
+  (when DEBUG
     (love.graphics.setColor 1 0 0 1)
     (local v (Line:new !.p (* 0.1 !.v)))
     (v:draw s)

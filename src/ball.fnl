@@ -2,7 +2,6 @@
 (local Line (require :src.line))
 (local Phys (require :src.phys))
 (local Ball {}) (set Ball.__index Ball)
-(local DEBUG false)
 
 (fn Ball.new [! x y pocket?]
   (let [ballin  (/ 2.25 2)
@@ -13,13 +12,14 @@
         (p v a) (values (Vec:new x y) (Vec:new) (Vec:new))]
     (setmetatable {: radius : p : v : a : pocket?} !)))
 
-(fn Ball.update [! dt walls?] (when (not !.pocket?)
-  (let [tan (when !.norm (Line.normal (Line:new !.p !.norm)))]
-    (set !.a (Phys.acc !.v dt !.norm))
-    (set !.v (Phys.vel !.v !.a dt tan))
-    (set !.p (Phys.pos !.p !.v dt))
-    (set !.norm (Vec.avg 
-      (walls? !.p (Phys.pos !.p !.v dt) !.radius))))))
+(fn Ball.update [! dt tick? walls?] 
+  (when (and tick? (not !.pocket?))
+    (let [tan (when !.norm (Line.normal (Line:new !.p !.norm)))
+          new #(Phys.pos !.p !.v dt)]
+      (set !.a (Phys.acc !.v dt !.norm))
+      (set !.v (Phys.vel !.v !.a dt tan))
+      (set !.p (Phys.pos !.p !.v dt))
+      (set !.norm (Vec.avg (walls? !.p (new) !.radius))))))
 
 (fn Ball.draw [! s]
   (local (angle1 angle2) (case !.pocket?
@@ -32,7 +32,7 @@
     _   (values (* 0.0 math.pi) (* 2.0 math.pi))))
   (love.graphics.arc :line (* s !.p.x) (* s !.p.y) 
     (* s !.radius) angle1 angle2)
-  (when DEBUG
+  (when _G.DEBUG
     (love.graphics.setColor 1 0 0 1)
     (local v (Line:new !.p (* 0.1 !.v)))
     (v:draw s)

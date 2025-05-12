@@ -27,9 +27,16 @@
   ; end testing
   !)
 
-(fn Game.update [! dt] (!.walls:update dt) (!.balls:update dt))
+(fn Game.update [! dt]
+  (set !.tick (+ (or !.tick 0) dt))
+  (set !.tick? (> !.tick _G.TICKRATE))
+  (!.walls:update !.tick !.tick?)
+  (!.balls:update !.tick !.tick?)
+  (when !.tick? (set !.tick nil)))
 
-(fn Game.draw [! cmpx] (!.walls:draw cmpx) (!.balls:draw cmpx))
+(fn Game.draw [! cmpx] 
+  (!.walls:draw cmpx) 
+  (!.balls:draw cmpx))
 
 (fn Game.keypressed [! key]
   (!.balls:spawn 

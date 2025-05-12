@@ -5,7 +5,7 @@
 
 (fn Spawner.update [! dt tick?]
   (each [A spawn (ipairs !.spawns)] 
-    (when spawn.update (spawn:update dt !.query?))))
+    (when spawn.update (spawn:update dt tick? !.query?))))
 
 (fn Spawner.draw [! scale]
   (each [_ spawn (ipairs !.spawns)] 

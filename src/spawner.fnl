@@ -1,21 +1,21 @@
 (local Spawner {}) (set Spawner.__index Spawner)
 
-(fn Spawner.new [self class query?]
-  (setmetatable {: class :spawns [] : query?} self))
+(fn Spawner.new [! class query?]
+  (setmetatable {: class :spawns [] : query?} !))
 
-(fn Spawner.update [self dt tick?]
-  (each [A spawn (ipairs self.spawns)] 
-    (when spawn.update (spawn:update dt self.query?))))
+(fn Spawner.update [! dt tick?]
+  (each [A spawn (ipairs !.spawns)] 
+    (when spawn.update (spawn:update dt !.query?))))
 
-(fn Spawner.draw [self scale]
-  (each [_ spawn (ipairs self.spawns)] 
+(fn Spawner.draw [! scale]
+  (each [_ spawn (ipairs !.spawns)] 
     (when spawn.draw (spawn:draw scale))))
 
-(fn Spawner.spawn [self ...]
-  (table.insert self.spawns (self.class:new ...)))
+(fn Spawner.spawn [! ...]
+  (table.insert !.spawns (!.class:new ...)))
 
-(fn Spawner.query [self f]
-  #(icollect [_ spawn (ipairs self.spawns)] 
+(fn Spawner.query [! f]
+  #(icollect [_ spawn (ipairs !.spawns)] 
     ((. spawn f) spawn $...)))
 
 Spawner

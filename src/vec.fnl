@@ -1,19 +1,19 @@
 (local Vec {}) (set Vec.__index Vec)
 
-(fn Vec.new [self a b polar?]
+(fn Vec.new [! a b polar?]
   (let [(a b) (values (or a 0) (or b 0))
         x (if polar? (* (math.cos b) a) a)
         y (if polar? (* (math.sin b) a) b)]
-    (setmetatable {: x : y} self)))
-(fn Vec.polar [self] (math.atan2 self.y self.x))
-(fn Vec.# [self] (math.sqrt (+ (^ self.x 2) (^ self.y 2))))
-(fn Vec.unit [self] (/ self (self:#)))
+    (setmetatable {: x : y} !)))
+(fn Vec.polar [!] (math.atan2 !.y !.x))
+(fn Vec.# [!] (math.sqrt (+ (^ !.x 2) (^ !.y 2))))
+(fn Vec.unit [!] (/ ! (!:#)))
 
-(fn Vec.sign [self]
+(fn Vec.sign [!]
   (let [sign #(case [$1]  (where [v] (< v 0)) -1
                           (where [v] (= v 0)) 0
                           (where [v] (> v 0)) 1)]
-    (Vec:new (sign self.x) (sign self.y))))
+    (Vec:new (sign !.x) (sign !.y))))
 
 (fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") vector by non-vector/number")]

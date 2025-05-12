@@ -1,8 +1,8 @@
 (local Set {}) (set Set.__index Set)
 
 ; TODO expand and clean up
-(fn Set.new [self t]
-  (let [s (setmetatable {} self)]
+(fn Set.new [! t]
+  (let [s (setmetatable {} !)]
     (each [_ v (ipairs t)] (tset s v true))
     s))
 

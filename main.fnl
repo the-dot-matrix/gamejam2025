@@ -17,7 +17,8 @@
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)
         font    (love.graphics.newFont 10 :mono)]
-    (love.window.updateMode win.x win.y {:vsync _G.VSYNC})
+    (love.window.updateMode win.x win.y 
+      {:vsync _G.VSYNC :borderless true})
     (font:setFilter :nearest)
     (love.graphics.setFont font)
     (set downscale smaller)
@@ -45,4 +46,6 @@
   (love.graphics.draw overlay)
   (love.graphics.pop))
 
-(fn love.keypressed [key] (screen:keypressed key))
+(fn love.keypressed [key] 
+  (when (= key :escape) (love.event.push :quit))
+  (screen:keypressed key))

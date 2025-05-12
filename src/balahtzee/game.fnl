@@ -7,6 +7,8 @@
 (fn Game.new [!]
   (local ! (setmetatable {} !))
   (set !.area (Vec:new 116 232))
+  (set !.border (Vec:new 10 10))
+  (set !.units (+ !.area (* !.border 2)))
   (set !.walls (Spawner:new Line))
   (!.walls:spawn 0 0 !.area.x 0)
   (!.walls:spawn !.area.x 0 !.area.x !.area.y)
@@ -34,9 +36,14 @@
   (!.balls:update !.tick !.tick?)
   (when !.tick? (set !.tick nil)))
 
-(fn Game.draw [! cmpx] 
+(fn Game.draw [! cmpx]
+  (love.graphics.push)
+  (love.graphics.translate 
+    (* cmpx !.border.x)
+    (* cmpx !.border.y 0.25))
+  (!.balls:draw cmpx)
   (!.walls:draw cmpx) 
-  (!.balls:draw cmpx))
+  (love.graphics.pop))
 
 (fn Game.keypressed [! key]
   (!.balls:spawn 

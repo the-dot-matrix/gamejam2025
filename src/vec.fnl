@@ -15,11 +15,6 @@
                           (where [v] (> v 0)) 1)]
     (Vec:new (sign self.x) (sign self.y))))
 
-(fn Vec.line [self other]
-  (local Line (require :src.line))
-  (Line:new ;; TODO calculate perpendicular to normal sanely
-  self.x self.y (+ self.x other.x) (+ self.y other.y)))
-
 (fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") vector by non-vector/number")]
     (case [(type a) (getmetatable a) (type b) (getmetatable b)]

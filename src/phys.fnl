@@ -1,45 +1,38 @@
 (local Vec (require :src.vec))
 (local Phys {}) (set Phys.__index Phys)
-(local (M G MU D P B) (values 200 986 0.04 0.1 0.5 1.1))
-(local Z (* (/ 6 360) 2 math.pi))
 
 (fn Phys.force [theta gravity?]
-  (let [gravity   (* M (or gravity? G))
+  (let [(M G MU)  (values 200 986 0.04)
+        gravity   (* M (or gravity? G))
         net       (* gravity (math.sin theta))
         normal    (* gravity (math.cos theta))
-        friction  (* normal MU)]
+        friction  (* normal  MU)]
     (values (/ (- net friction) M) (/ net M))))
 
-(fn Phys.acc [v dt norm? tang?]
-  (var anew nil)
-  (let [z   (Phys.force Z)
-        g   (Vec:new 0 z)
-        i   (when norm? (Vec:new (Phys.force (norm?:polar) z)))
-        d   (when tang? (- (+ (tang?:polar) math.pi) (v:polar)))
-        mag (if (> (math.abs (or d 0)) D) 
-                (* -1 P (v:#)) 
-                (* -1   (v:#)))
-        b   (when norm? (* norm? (/ mag -10) (/ B dt)))]
-    (set anew (+ g i))
-    (when norm? (set anew (+ anew b))))
-  anew)
+(fn Phys.acc [v dt norm?]
+  (let [z (Phys.force (* (/ 6 360) 2 math.pi))
+        g (Vec:new 0 z)
+        i (when norm? (Vec:new (Phys.force (norm?:polar) z)))
+        b (when norm? (* norm? (/ v.y 5) (/ 0.5 dt)))]
+    (+ g i b)))
 
-(fn Phys.vel [v a dt tang?]
-  (var vnew nil)
-  (let [d   (when tang? (- (+ (tang?:polar) math.pi) (v:polar)))
-        mag (if (> (math.abs (or d 0)) D) 
-                (* -1 P (v:#)) 
-                (* -1   (v:#)))]
-    (when tang? (not= (tang?:polar) 0)
-      (set vnew (Vec:new mag (tang?:polar) true)))
-    (set vnew (+ v (* a dt)))
-    (when (and tang? (= (tang?:polar) 0)) (set vnew (Vec:new))))
-  vnew)
+(fn Phys.vel [v a dt tan?]
+  (let [d   (when tan? (- (v:polar) (tan?:polar) math.pi))
+        d   (when d (when (> d math.pi) (- d (* 2 math.pi))))
+        d   (when d (math.abs d))
+        mag (if (< 0.10 (or d 0)) (* -0.33 (v:#)) (* -1 (v:#)))
+        vt  (when tan? (Vec:new mag (tan?:polar) true))
+        vx  (if (= v.x 0) (love.math.random -1 1) v.x)
+        vx  (Vec:new (* -1 vx) 0)
+        vx  (Vec:new mag (vx:polar) true)
+        ax  (math.abs a.x)
+        ax  (if (> vx.x 0) (* -1 ax) ax)
+        ax  (Vec:new ax a.y)]
+    (case [(and tan? (tan?:polar))]
+      (where [t] (not= t 0))  (+ (* a dt) vt)
+      (where [t] (= t 0))     (+ (* ax dt) vx)
+      _                       (+ (* a dt) v))))
 
 (fn Phys.pos [p v dt] (+ p (* v dt)))
-
-(fn Phys.avg [vecs] (when (> (length vecs) 0)
-  (/  (accumulate [s (Vec:new) _ v (ipairs vecs)] (+ s v))
-      (length vecs))))
 
 Phys

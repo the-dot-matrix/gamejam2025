@@ -14,11 +14,11 @@
     (setmetatable {: radius : p : v : a : pocket?} !)))
 
 (fn Ball.update [! dt walls?] (when (not !.pocket?)
-  (let [tang (when !.norm (Line.normal (Line:new !.p !.norm)))]
-    (set !.a (Phys.acc !.v dt !.norm tang))
-    (set !.v (Phys.vel !.v !.a dt tang))
+  (let [tan (when !.norm (Line.normal (Line:new !.p !.norm)))]
+    (set !.a (Phys.acc !.v dt !.norm))
+    (set !.v (Phys.vel !.v !.a dt tan))
     (set !.p (Phys.pos !.p !.v dt))
-    (set !.norm (Phys.avg 
+    (set !.norm (Vec.avg 
       (walls? !.p (Phys.pos !.p !.v dt) !.radius))))))
 
 (fn Ball.draw [! s]
@@ -34,8 +34,7 @@
     (* s !.radius) angle1 angle2)
   (when debug
     (love.graphics.setColor 1 0 0 1)
-    (local v (Line:new !.p.x !.p.y
-      (+ !.p.x !.v.x) (+ !.p.y !.v.y)))
+    (local v (Line:new !.p (* 0.1 !.v)))
     (v:draw s)
     (love.graphics.setColor 0 0 1 1)
     (when !.norm 

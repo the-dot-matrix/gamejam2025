@@ -9,11 +9,9 @@
 (fn Vec.# [!] (math.sqrt (+ (^ !.x 2) (^ !.y 2))))
 (fn Vec.unit [!] (/ ! (!:#)))
 
-(fn Vec.sign [!]
-  (let [sign #(case [$1]  (where [v] (< v 0)) -1
-                          (where [v] (= v 0)) 0
-                          (where [v] (> v 0)) 1)]
-    (Vec:new (sign !.x) (sign !.y))))
+(fn Vec.avg [vecs] (when (> (length vecs) 0)
+  (/  (accumulate [s (Vec:new) _ v (ipairs vecs)] (+ s v))
+      (length vecs))))
 
 (fn arithmetic [f op a b]
   (let [msg (.. "can't (" op ") vector by non-vector/number")]

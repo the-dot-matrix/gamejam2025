@@ -2,7 +2,12 @@
 (local Line (require :src.line))
 (local Spawner (require :src.spawner))
 (local Sprite (require :src.afflictirelixir.sprite))
+(local Entity (require :src.afflictirelixir.entity))
 (local Game {}) (set Game.__index Game)
+
+(fn tIndex [x y]
+  (local tileLength 16)
+  (values (* x tileLength) (* y tileLength)))
 
 (fn Game.new [!]
   (local ! (setmetatable {} !))
@@ -41,11 +46,16 @@
   (!.trans:spawn (* 1 8)    (* 13 8)  (* 1 8)   (* 19 8))
   (!.trans:spawn (* 1 8)    (* 19 8)  (* 5 8)   (* 19 8))
   (!.trans:spawn (* 5 8)    (* 13 8)  (* 5 8)   (* 19 8))
-  (set !.heart    (Sprite:new :heart))
-  (set !.brain    (Sprite:new :brain))
-  (set !.spleen   (Sprite:new :spleen))
-  (set !.galblad  (Sprite:new :galblad))
-  (set !.bg       (Sprite:new))
+  (!.board:spawn (* 6 16)   (* 1 16)  (* 16 16) (* 1 16))
+  (!.board:spawn (* 6 16)   (* 1 16)  (* 6 16)  (* 12 16))
+  (!.board:spawn (* 6 16)   (* 12 16) (* 16 16) (* 12 16))
+  (!.board:spawn (* 16 16)  (* 1 16)  (* 16 16) (* 12 16))
+  (set !.heart    (Entity:new :heart    (tIndex 6 1)))
+  (set !.brain    (Entity:new :brain    (tIndex 15 1)))
+  (set !.spleen   (Entity:new :spleen   (tIndex 6 11)))
+  (set !.galblad  (Entity:new :galblad  (tIndex 15 11)))
+  (set !.bg       (Entity:new))
+  (!:keypressed)
   !)
 
 (fn Game.update [! dt]
@@ -67,10 +77,10 @@
   (love.graphics.push)
   (love.graphics.translate (/ -16 4) (/ -16 4))
   (!.board:draw scale)
-  (!.heart:draw (* 6 16) (* 1 16))
-  (!.brain:draw (* 15 16) (* 1 16))
-  (!.spleen:draw (* 6 16) (* 11 16))
-  (!.galblad:draw (* 15 16) (* 11 16))
+  (!.heart:draw) 
+  (!.brain:draw)
+  (!.spleen:draw) 
+  (!.galblad:draw) 
   (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ -16 4))
   (!.cards:draw scale)
@@ -80,7 +90,6 @@
   (!.trans:draw scale)
   (love.graphics.pop)
   (love.graphics.pop)
-  ;(!.bounds:draw scale)
   (love.graphics.pop))
 
 (fn Game.keypressed [! key])

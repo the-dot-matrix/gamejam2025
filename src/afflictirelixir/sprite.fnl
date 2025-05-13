@@ -41,16 +41,15 @@
 (fn Sprite.update [! dt]
   (set !.frame (% (+ !.frame (* dt 12)) (length !.quads))))
 
-(fn Sprite.draw [! ?x ?y ?scaleX ?scaleY ?flipX? ?flipY?]
-  (let [x       (or ?x 100)
-        y       (or ?y 100)
-        r       0
-        scaleX  (if ?scaleX ?scaleX 1)
-        scaleY  (if ?scaleY ?scaleY 1)
-        sX      (if ?flipX? (* -1 scaleX) scaleX)
-        sY      (if ?flipY? (* -1 scaleY) scaleY)
-        oX      0
-        oY      0]
+(fn Sprite.draw [! ?X ?Y ?R ?scaleX ?scaleY 
+                ?originX ?originY]
+  (let [x       (or ?X 0)
+        y       (or ?Y 0)
+        r       (or ?R 0)
+        sX      (or ?scaleX 1)
+        sY      (or ?scaleY 1)
+        oX      (or ?originX 0)
+        oY      (or ?originY 0)]
     (love.graphics.draw !.image 
       (. !.quads (+ (math.floor !.frame) 1))
       x y r sX sY oX oY)))

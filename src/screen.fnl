@@ -41,8 +41,8 @@
   (love.graphics.push)
   (love.graphics.setColor 0 1 0 1)
   (love.graphics.scale 2 2)
-  (love.graphics.print (..  
-    "  FPS:" (love.timer.getFPS)))
+  (when _G.DEBUG (love.graphics.print (..  
+    "  FPS:" (love.timer.getFPS))))
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop)
   (love.graphics.pop)

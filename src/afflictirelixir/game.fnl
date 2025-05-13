@@ -25,7 +25,11 @@
   (set !.tick (+ (or !.tick 0) dt))
   (set !.tick? (> !.tick _G.TICKRATE))
   (!.walls:update !.tick !.tick?)
-  (when !.tick? (set !.tick nil)))
+  (!.heart:update dt)
+  (!.brain:update dt)
+  (!.spleen:update dt)
+  (!.galblad:update dt)
+  (when !.tick? (set !.tick 0)))
 
 (fn Game.draw [! scale]
   (love.graphics.push)

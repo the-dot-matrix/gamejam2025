@@ -33,11 +33,14 @@
                               (+ 1 (* i (+ width padding)))
                               (+ 1 (* j (+ height padding)))
                               width height w h))) nil)
-        sprite        {: image : quads : tileCount}]
+        sprite        {: image : quads : tileCount :frame 0}]
     (if (not goodPadding?) (error (.. "poorly padded " name)))
     (setmetatable sprite !)))
 
-(fn Sprite.draw [! ?x ?y ?scale ?flipX? ?flipY? ]
+(fn Sprite.update [! dt]
+  (set !.frame (% (+ !.frame (* dt 12)) (length !.quads))))
+
+(fn Sprite.draw [! ?x ?y ?scale ?flipX? ?flipY?]
   (let [x (or ?x 100)
         y (or ?y 100)
         r 0
@@ -49,8 +52,9 @@
         center #(math.floor (/ (- $1 $2) 2))]
     (love.graphics.push)
     (love.graphics.translate  (center x (+ x width)) 
-                              (center y (+ y height) ))
-    (love.graphics.draw !.image (. !.quads 1) 
+                              (center y (+ y height)))
+    (love.graphics.draw !.image 
+      (. !.quads (+ (math.floor !.frame) 1))
       x y r sX sY oX oY)
     (love.graphics.pop)))
 

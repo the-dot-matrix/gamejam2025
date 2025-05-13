@@ -1,5 +1,5 @@
 (local Games {:a :balahtzee :b :afflictirelixir})
-(local Game (require (.. :src. Games.a :.game)))
+(local Game (require (.. :src. Games.b :.game)))
 (local Vec (require :src.vec))
 (local Screen {}) (set Screen.__index Screen)
 

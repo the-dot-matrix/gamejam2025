@@ -1,6 +1,6 @@
 (local Vec (require :src.vec))
 (local Screen (require :src.screen))
-(var (screen upscale overlay downscale) (values nil nil))
+(var (screen upscale overlay downscale) (values))
 
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)
@@ -29,18 +29,10 @@
 (fn love.update [dt] (screen:update dt))
 
 (fn love.draw []
-  (love.graphics.clear 1 0 1 1)
   (love.graphics.push)
   (love.graphics.translate 450 25)
   (love.graphics.scale upscale upscale)
   (screen:draw)
-  (love.graphics.setColor 0 1 0 1)
-  (love.graphics.push)
-  (love.graphics.scale 3 3)
-  (love.graphics.print (..  
-    " FPS:" (love.timer.getFPS)))
-  (love.graphics.pop)
-  (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop)
   (love.graphics.push)
   (love.graphics.scale downscale downscale)

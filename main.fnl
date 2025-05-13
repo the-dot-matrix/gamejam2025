@@ -16,7 +16,7 @@
         render  (Screen:new)
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)
-        font    (love.graphics.newFont 9 :mono)]
+        font    (love.graphics.newFont 8 :mono)]
     (love.window.updateMode win.x win.y 
       {:vsync _G.VSYNC :borderless true})
     (font:setFilter :nearest)

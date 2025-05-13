@@ -14,10 +14,11 @@
   (!.walls:spawn !.area.x !.area.y 0 !.area.y)
   (!.walls:spawn 0 !.area.y 0 0)
   (set !.dabois [])
+  (local boiNames [:brainBoi :heartBoi])
   (for [i 1 2]
     (table.insert !.dabois {
       :img      (love.graphics.newImage 
-                  (.. :src/afflictirelixir/img/sprites/b i :.bmp))})
+                  (.. :src/afflictirelixir/img/sprites/ (. boiNames i):.bmp))})
     (local boi (. !.dabois i))
     (set boi.scalex (/ !.area.x (boi.img:getWidth) 4))
     (set boi.scaley (/ !.area.y (boi.img:getHeight) 4)))

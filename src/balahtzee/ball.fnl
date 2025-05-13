@@ -6,7 +6,7 @@
 (fn Ball.new [! x y pocket?]
   (let [ballin  (/ 2.25 2)
         ballcm  (* ballin 2.54)
-        (crn mid) (values (* ballcm 2.25) (* ballcm 1.75))
+        (crn mid) (values (* ballcm 3.125) (* ballcm 2.375))
         sizes {:UL crn :UR crn :ML mid :MR mid :DL crn :DR crn}
         radius  (or (. sizes pocket?) ballcm)
         (p v a) (values (Vec:new x y) (Vec:new) (Vec:new))]
@@ -30,8 +30,8 @@
     :DL (values (* 1.5 math.pi) (* 2.0 math.pi))
     :DR (values (* 1.0 math.pi) (* 1.5 math.pi))
     _   (values (* 0.0 math.pi) (* 2.0 math.pi))))
-  (love.graphics.arc :line (* s !.p.x) (* s !.p.y) 
-    (* s !.radius) angle1 angle2)
+  (love.graphics.arc (or (and !.pocket? :fill) :line)
+    (* s !.p.x) (* s !.p.y) (* s !.radius) angle1 angle2)
   (when _G.DEBUG
     (love.graphics.setColor 1 0 0 1)
     (local v (Line:new !.p (* 0.1 !.v)))

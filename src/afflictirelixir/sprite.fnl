@@ -1,6 +1,6 @@
 (local Sprite {}) (set Sprite.__index Sprite)
 (local game :afflictirelixir/)
-(local missingTexture (.. :src/ game :img/nil.bmp))
+(local missingTexture (.. :src/ game :img/nil.png))
 (local (width height padding) (values 16 16 1))
 
 (fn Sprite.new [! ?name ?fileType]
@@ -10,7 +10,7 @@
   ;; if ?fileType not specified assumes .bmp
   ;; fileName example: :Brain_Boi
   ;; fileType example: :.bmp
-  (let [fileType      (or ?fileType :.bmp)
+  (let [fileType      (or ?fileType :.png)
         name          (or ?name :nil)
         fileName      (.. name fileType)
         path          (.. :src/ game :img/ fileName)

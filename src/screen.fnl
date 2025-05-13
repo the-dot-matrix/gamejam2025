@@ -8,8 +8,8 @@
         game    (Game:new)
         units   game.units
         convert (/ res units)
-        cmpx    (math.min convert.x convert.y)
-        pixels  (* units cmpx)
+        scale   (math.min convert.x convert.y)
+        pixels  (* units scale)
         screen  (love.graphics.newCanvas res.x res.y)
         native  (love.graphics.newCanvas pixels.x pixels.y)
         centerf #(math.floor (/ (- $1 $2) 2))
@@ -17,7 +17,7 @@
         centery (centerf (screen:getHeight) (native:getHeight))
         mid     (Vec:new centerx centery)
         pfx     (love.graphics.newShader :img/crt.glsl)
-        s {: res : screen : native : cmpx : game : mid : pfx}]
+        s {: res : screen : native : scale : game : mid : pfx}]
     (native:setFilter :nearest :nearest 0)
     (screen:setFilter :nearest :nearest 0)
     (setmetatable s !)))
@@ -30,7 +30,7 @@
   (love.graphics.setCanvas !.native)
   (love.graphics.clear 0.04 0.04 0.04)
   (love.graphics.push)
-  (!.game:draw !.cmpx)
+  (!.game:draw !.scale)
   (love.graphics.pop)
   (love.graphics.setCanvas !.screen)
   (love.graphics.clear 0.02 0.02 0.02)

@@ -1,9 +1,9 @@
-(local sprites {}) (set sprites.__index sprites)
+(local Sprite {}) (set Sprite.__index Sprite)
 (local game :afflictirelixir/)
-(local missingTexture (.. :src/ game :img/sprites/missingSprite.bmp))
+(local missingTexture (.. :src/ game :img/nil.bmp))
 (local (width height padding) (values 16 16 1))
 
-(fn sprites.new [! ?name ?fileType]
+(fn Sprite.new [! ?name ?fileType]
   ;; AutoSlices sprite sheet according to image dimensions and 
   ;; listed default dimensions.
   ;; Assume all files have padding tiles no double up padding
@@ -11,9 +11,9 @@
   ;; fileName example: :Brain_Boi
   ;; fileType example: :.bmp
   (let [fileType      (or ?fileType :.bmp)
-        name          (or ?name :missingSprite)
+        name          (or ?name :nil)
         fileName      (.. name fileType)
-        path          (.. :src/ game :img/sprites/ fileName)
+        path          (.. :src/ game :img/ fileName)
         fileExists?   (love.filesystem.getInfo path)
         path          (if fileExists? path missingTexture)
         image         (love.graphics.newImage path)
@@ -22,8 +22,8 @@
                         (/ (- $4 $1) (+ $5 $1)))
         (tileW tileH) (tileCounter padding w width h height)
         floor         math.floor
-        goodPadding?  (and (= tileW (floor tileW)) ;;using math.floor instead of math.type
-                        (= tileH (floor tileH)))
+        goodPadding?  (and  (= tileW (floor tileW))
+                            (= tileH (floor tileH)))
         tileCount     (* tileW tileH)
         quads         (if goodPadding?
                         (fcollect [index 1 tileCount 1]
@@ -34,12 +34,10 @@
                               (+ 1 (* j (+ height padding)))
                               width height w h))) nil)
         sprite        {: image : quads : tileCount}]
-    (if (not goodPadding?) (error
-      (.. "you gave me a fucked image you bitch:\n"
-        "probably bad padding;" name)))
-    (setmetatable  sprite !)))
+    (if (not goodPadding?) (error (.. "poorly padded " name)))
+    (setmetatable sprite !)))
 
-(fn sprites.draw [! ?x ?y ?scale ?flipX? ?flipY? ]
+(fn Sprite.draw [! ?x ?y ?scale ?flipX? ?flipY? ]
   (let [x (or ?x 100)
         y (or ?y 100)
         r 0
@@ -47,15 +45,21 @@
         sX (if ?flipX? (* -1 scale) scale)
         sY (if ?flipY? (* -1 scale) scale)
         oX 0
-        oY 0]
-    (love.graphics.draw !.image (. !.quads 1) x y r sX sY oX oY)))
+        oY 0
+        center #(math.floor (/ (- $1 $2) 2))]
+    (love.graphics.push)
+    (love.graphics.translate  (center x (+ x width)) 
+                              (center y (+ y height) ))
+    (love.graphics.draw !.image (. !.quads 1) 
+      x y r sX sY oX oY)
+    (love.graphics.pop)))
 
-sprites
+Sprite
 
 ;;instructions:
-;; (local sprites (require :src.afflictirelixir.sprites))
+;; (local Sprite (require :src.afflictirelixir.sprite))
 ;; new sprite object
-;; (local name (sprites:new :name))
+;; (local name (Sprite:new :name))
 ;; drawing
 ;; (name:draw ?x ?y ?scale ?flipX? ?flipY?)
 ;; all variables ommitable technically,

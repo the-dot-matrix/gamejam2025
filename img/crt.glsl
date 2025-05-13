@@ -17,9 +17,9 @@ vec4 effect(vec4 color, Image tex, vec2 txy, vec2 sxy) {
   }
   avg = vec4(avg.xyz/25, avg.w);
   float M = 0;
-  M += max(avg.x,avg.y);
-  M += max(avg.y,avg.z);
-  M += max(avg.z,avg.x);
+  M += max(src.x,src.y);
+  M += max(src.y,src.z);
+  M += max(src.z,src.x);
   M /= 3;
   vec4 bleed = vec4(avg.xyz/pow(2,d*(1-M)),avg.w);
   vec4 rgb = vec4(M,M,M,1);

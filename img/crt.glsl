@@ -15,5 +15,6 @@ vec4 effect(vec4 color, Image tex, vec2 txy, vec2 sxy) {
     }
   }
   average = average / 3;
+  average = color * average;
   return (mx==0 && my==0) ? average : (average/(d+1));
 }

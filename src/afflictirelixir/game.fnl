@@ -80,7 +80,7 @@
   (!.trans:draw scale)
   (love.graphics.pop)
   (love.graphics.pop)
-  (!.bounds:draw scale)
+  ;(!.bounds:draw scale)
   (love.graphics.pop))
 
 (fn Game.keypressed [! key])

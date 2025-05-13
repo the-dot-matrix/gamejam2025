@@ -32,6 +32,7 @@
   (when !.tick? (set !.tick 0)))
 
 (fn Game.draw [! scale]
+  (love.graphics.clear 0.2 0.2 0.2)
   (love.graphics.push)
   (love.graphics.translate 
     (* scale !.border.x)

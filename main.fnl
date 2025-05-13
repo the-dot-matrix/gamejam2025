@@ -5,7 +5,7 @@
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)
         res     (Vec:new (image:getWidth) (image:getHeight))
-        (w h)   (love.window.getDesktopDimensions)
+        (w h)   (values 1600 900)
         display (Vec:new w h)
         fitto   (/ res display)
         smaller (/ (math.min fitto.x fitto.y) 1.0)

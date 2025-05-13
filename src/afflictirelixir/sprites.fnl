@@ -39,7 +39,7 @@
         "probably bad padding;" name)))
     (setmetatable  sprite !)))
 
-(fn sprites.draw [! ?x ?y ?flipX? ?flipY? ?scale]
+(fn sprites.draw [! ?x ?y ?scale ?flipX? ?flipY? ]
   (let [x (or ?x 100)
         y (or ?y 100)
         r 0
@@ -57,5 +57,5 @@ sprites
 ;; new sprite object
 ;; (local name (sprites:new :name))
 ;; drawing
-;; (name:draw ?x ?y ?flipX? ?flipY? ?scale)
+;; (name:draw ?x ?y ?scale ?flipX? ?flipY?)
 ;; all variables ommitable technically,

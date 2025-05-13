@@ -1,10 +1,10 @@
 (local Games {:a :balahtzee :b :afflictirelixir})
-(local Game (require (.. :src. Games.b :.game)))
+(local Game (require (.. :src. Games.a :.game)))
 (local Vec (require :src.vec))
 (local Screen {}) (set Screen.__index Screen)
 
 (fn Screen.new [!]
-  (let [res     (Vec:new 480 360)
+  (let [res     (Vec:new 400 300)
         game    (Game:new)
         units   game.units
         convert (/ res units)
@@ -12,9 +12,13 @@
         pixels  (* units cmpx)
         screen  (love.graphics.newCanvas res.x res.y)
         native  (love.graphics.newCanvas pixels.x pixels.y)
-        s {: res : screen : native : cmpx : game }]
-    (native:setFilter :nearest :nearest 0)
-    (screen:setFilter :nearest :nearest 0)
+        center  #(math.floor (/ (- $1 $2) 2))
+        centerx (center (screen:getWidth) (native:getWidth))
+        centery (center (screen:getHeight) (native:getHeight))
+        cvec    (Vec:new centerx centery)
+        s {: res : screen : native : cmpx : game :center cvec}]
+    (native:setFilter :nearest :nearest 1)
+    (screen:setFilter :nearest :nearest 1)
     (setmetatable s !)))
 
 (fn Screen.update [! dt] (!.game:update dt))
@@ -30,9 +34,7 @@
   (love.graphics.setCanvas !.screen)
   (love.graphics.clear 0.04 0.04 0.04)
   (love.graphics.push)
-  (love.graphics.translate 
-    (/ (- (!.screen:getWidth) (!.native:getWidth)) 2) 
-    (/ (- (!.screen:getHeight) (!.native:getHeight)) 2))
+  (love.graphics.translate !.center.x !.center.y)
   (love.graphics.draw !.native)
   (love.graphics.pop)
   (love.graphics.pop)

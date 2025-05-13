@@ -16,23 +16,22 @@
         render  (Screen:new)
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)
-        font    (love.graphics.newFont 10 :mono)]
+        font    (love.graphics.newFont 9 :mono)]
     (love.window.updateMode win.x win.y 
       {:vsync _G.VSYNC :borderless true})
     (font:setFilter :nearest)
     (love.graphics.setFont font)
     (set downscale smaller)
     (set overlay image)
-    (set upscale larger)
+    (set upscale (* larger smaller))
     (set screen render)))
 
 (fn love.update [dt] (screen:update dt))
 
 (fn love.draw []
+  (love.graphics.clear 1 0 1 1)
   (love.graphics.push)
-  (love.graphics.scale downscale downscale)
-  (love.graphics.push)
-  (love.graphics.translate 925 80)
+  (love.graphics.translate 450 25)
   (love.graphics.scale upscale upscale)
   (screen:draw)
   (love.graphics.setColor 0 1 0 1)
@@ -43,6 +42,8 @@
   (love.graphics.pop)
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop)
+  (love.graphics.push)
+  (love.graphics.scale downscale downscale)
   (love.graphics.draw overlay)
   (love.graphics.pop))
 

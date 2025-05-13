@@ -40,7 +40,7 @@
   (love.graphics.push)
   (love.graphics.translate 
     (* cmpx !.border.x)
-    (* cmpx !.border.y 0.25))
+    (* cmpx !.border.y 0.5))
   (!.balls:draw cmpx)
   (!.walls:draw cmpx) 
   (love.graphics.pop))

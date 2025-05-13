@@ -5,7 +5,7 @@
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)
         res     (Vec:new (image:getWidth) (image:getHeight))
-        (w h)   (values 1280 720)
+        (w h)   (love.graphics.getDimensions)
         display (Vec:new w h)
         fitto   (/ display res)
         smaller (math.min fitto.x fitto.y)
@@ -15,8 +15,6 @@
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)
         font    (love.graphics.newFont 8 :mono)]
-    (love.window.updateMode win.x win.y 
-      {:vsync _G.VSYNC :borderless true})
     (font:setFilter :nearest)
     (love.graphics.setFont font)
     (set downscale smaller)

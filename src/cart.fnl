@@ -2,22 +2,29 @@
 
 (fn CART.new [! scale]
   (local ! (setmetatable {} !))
-  (let [files   (love.filesystem.getDirectoryItems :src)]
+  (let [files   (love.filesystem.getDirectoryItems :src)
+        (x w h)   (values 165 380 48)]
     (set !.games [])
-    (each [_ name (ipairs files)] (when 
+    (var g 1)
+    (each [i name (ipairs files)] (when 
       (love.filesystem.getInfo (.. :src/ name) :directory) 
-      (table.insert !.games {: name :x 165 :w 380 :h 48})))
-    (each [i game (ipairs !.games)] 
-      (set game.y (* (+ i 1) game.h -1)))
+      (tset !.games name {: x :y (* (+ g 1) h -1) : w : h})
+      (set g (+ g 1))))
     (set !.texttrans (love.math.newTransform 0 0 (/ math.pi 2)
       scale scale))
     (set !.scale !.scale)
     !))
 
+(fn CART.update [! name]
+  (each [name g (pairs !.games)] 
+    (set (g.selected g.hovering) (values false false)))
+  (set (. !.games name :selected) true)
+  (require (.. :src. name :.game)))
+
 (fn CART.draw [!]
   (love.graphics.push)
   (love.graphics.applyTransform !.texttrans)
-  (each [i g (ipairs !.games)]
+  (each [name g (pairs !.games)]
     (if g.hovering (love.graphics.setColor 0 0 0 0.2)
       (if g.selected  (love.graphics.setColor 0 0 0 0.8)
                       (love.graphics.setColor 1 1 1 0.4)))
@@ -25,12 +32,12 @@
     (if g.hovering (love.graphics.setColor 1 1 1 0.2)
       (if g.selected  (love.graphics.setColor 1 1 1 0.8)
                       (love.graphics.setColor 0 0 0 0.4)))
-    (love.graphics.print g.name g.x g.y))
+    (love.graphics.print name g.x g.y))
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop))
 
 (fn CART.mousemoved [! x y]
-  (each [i g (ipairs !.games)]
+  (each [name g (pairs !.games)]
     (local (tx ty) (!.texttrans:inverseTransformPoint x y))
     (if (and  (> tx g.x) (< tx (+ g.x g.w))
               (> ty g.y) (< ty (+ g.y g.h)))
@@ -39,14 +46,11 @@
 
 (fn CART.mousepressed [! x y]
   (var game nil)
-  (each [i g (ipairs !.games)]
+  (each [name g (pairs !.games)]
     (local (tx ty) (!.texttrans:inverseTransformPoint x y))
     (when (and  (> tx g.x) (< tx (+ g.x g.w))
                 (> ty g.y) (< ty (+ g.y g.h)))
-      (each [i g (ipairs !.games)] 
-        (set (g.selected g.hovering) (values false false)))
-        (set g.selected true)
-        (set game (require (.. :src. g.name :.game)))))
+      (set game (!:update name))))
   game)
 
 CART

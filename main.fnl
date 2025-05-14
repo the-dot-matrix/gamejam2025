@@ -4,6 +4,16 @@
 (local Vec (require :src.vec))
 (var (cart crt ctrl game overlay downscale upscale) (values))
 
+(fn boot [Game]
+  (set game (Game:new))
+  (let [view    (Vec:new 1600 1200)
+        render  (CRT:new game)
+        fitto   (/ view render.res)
+        larger  (math.min fitto.x fitto.y)]
+    (set upscale larger)
+    (set crt render)
+    (ctrl:register game)))
+
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)
         res     (Vec:new (image:getWidth) (image:getHeight))
@@ -18,7 +28,8 @@
     (set downscale smaller)
     (set overlay image)
     (set cart (CART:new downscale))
-    (set ctrl (CTRL:new))))
+    (set ctrl (CTRL:new))
+    (boot (cart:update :_controller))))
 
 (fn love.update [dt] (when crt (crt:update dt)))
 
@@ -48,15 +59,7 @@
 
 (fn love.mousepressed [...] 
   (local Game (cart:mousepressed ...))
-  (when Game 
-    (set game (Game:new))
-    (let [view    (Vec:new 1600 1200)
-          render  (CRT:new game)
-          fitto   (/ view render.res)
-          larger  (math.min fitto.x fitto.y)]
-      (set upscale larger)
-      (set crt render)
-      (ctrl:register game)))
+  (when Game (boot Game))
   (ctrl:mousepressed ...))
 
 (fn love.mousereleased [...] (ctrl:mousereleased ...))

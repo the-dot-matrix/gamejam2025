@@ -3,7 +3,7 @@
 
 (fn CRT.new [! game]
   (let [res     (Vec:new 266 200)
-        units   game.units
+        units   (or game.units res)
         convert (/ res units)
         scale   (math.min convert.x convert.y)
         pixels  (* units scale)

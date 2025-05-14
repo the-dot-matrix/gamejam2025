@@ -36,6 +36,7 @@
   (set !.brain    (Entity:new :brain    (tIndex 15 1)))
   (set !.spleen   (Entity:new :spleen   (tIndex 6 11)))
   (set !.galblad  (Entity:new :galblad  (tIndex 15 11)))
+  (set !.wizard   (Entity:new :wizard   (tIndex 10 6)))
   (set !.bg       (Entity:new))
   !)
 
@@ -61,7 +62,8 @@
   (!.heart:draw) 
   (!.brain:draw)
   (!.spleen:draw) 
-  (!.galblad:draw) 
+  (!.galblad:draw)
+  (!.wizard:draw)
   (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ -16 4))
   (!.cards:draw scale)

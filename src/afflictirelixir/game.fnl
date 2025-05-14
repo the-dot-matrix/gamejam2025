@@ -44,14 +44,10 @@
   !)
 
 (fn Game.update [! dt]
-  (set !.tick (+ (or !.tick 0) dt))
-  (set !.tick? (> !.tick _G.TICKRATE))
-  (!.bounds:update !.tick !.tick?)
   (!.heart:update dt)
   (!.brain:update dt)
   (!.spleen:update dt)
-  (!.galblad:update dt)
-  (when !.tick? (set !.tick 0)))
+  (!.galblad:update dt))
 
 (fn Game.draw [! scale]
   (love.graphics.clear 0.65 0.65 0.65)

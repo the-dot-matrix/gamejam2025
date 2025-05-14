@@ -1,7 +1,8 @@
 (local Vec (require :src.vec))
 (local CRT (require :src.crt))
+(local Cart (require :src.cart))
 (local games [])
-(var (screen upscale overlay downscale texttrans) (values))
+(var (cart screen upscale overlay downscale) (values))
 
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)
@@ -11,71 +12,40 @@
         fitto   (/ display res)
         smaller (math.min fitto.x fitto.y)
         win     (* res smaller)
-        font    (love.graphics.newFont 42 :mono)
-        files   (love.filesystem.getDirectoryItems :src)]
+        font    (love.graphics.newFont 42 :mono)]
     (font:setFilter :nearest)
     (love.graphics.setFont font)
     (set downscale smaller)
     (set overlay image)
-    (each [_ name (ipairs files)] (when 
-      (love.filesystem.getInfo (.. :src/ name) :directory) 
-      (table.insert games {: name :x 165 :w 380 :h 48})))
-    (each [i game (ipairs games)] 
-      (set game.y (* (+ i 1) game.h -1)))
-    (set texttrans (love.math.newTransform 0 0 (/ math.pi 2)
-      downscale downscale))))
+    (set cart (Cart:new downscale))))
 
 (fn love.update [dt] (when screen (screen:update dt)))
 
 (fn love.draw []
   (love.graphics.push)
-  (love.graphics.translate 450 25)
-  (love.graphics.scale upscale upscale)
+  (love.graphics.scale downscale downscale)
+  (love.graphics.push)
+  (love.graphics.translate 900 50)
+  (love.graphics.scale upscale upscale)  
   (when screen (screen:draw))
   (love.graphics.pop)
-  (love.graphics.push)
-  (love.graphics.scale downscale downscale)
   (love.graphics.draw overlay)
   (love.graphics.pop)
-  (love.graphics.push)
-  (love.graphics.applyTransform texttrans)
-  (each [i g (ipairs games)]
-    (if g.hovering (love.graphics.setColor 0 0 0 0.3)
-      (if g.selected  (love.graphics.setColor 0 0 0 0.9)
-                      (love.graphics.setColor 1 1 1 0.6)))
-    (love.graphics.rectangle :fill g.x g.y g.w g.h)
-    (if g.hovering (love.graphics.setColor 1 1 1 0.3)
-      (if g.selected  (love.graphics.setColor 1 1 1 0.9)
-                      (love.graphics.setColor 0 0 0 0.6)))
-    (love.graphics.print g.name g.x g.y))
-  (love.graphics.setColor 1 1 1 1)
-  (love.graphics.pop))
+  (cart:draw))
 
-(fn love.keypressed [key] 
+(fn love.keypressed [key ...] 
   (when (= key :escape) (love.event.push :quit))
   (when (and screen screen.keypressed) 
-    (screen:keypressed key)))
+    (screen:keypressed key ...)))
 
-(fn love.mousemoved [x y]
-  (each [i g (ipairs games)]
-    (local (tx ty) (texttrans:inverseTransformPoint x y))
-    (if (and  (> tx g.x) (< tx (+ g.x g.w))
-                (> ty g.y) (< ty (+ g.y g.h)))
-      (set g.hovering (not g.selected))
-      (set g.hovering false))))
+(fn love.mousemoved [...] (cart:mousemoved ...))
 
-(fn love.mousepressed [x y button]
-  (each [i g (ipairs games)]
-    (local (tx ty) (texttrans:inverseTransformPoint x y))
-    (when (and  (> tx g.x) (< tx (+ g.x g.w))
-                (> ty g.y) (< ty (+ g.y g.h)))
-      (let [game    (require (.. :src. g.name :.game))
-            view    (Vec:new 1600 1200)
-            render  (CRT:new game)
-            fitto   (/ view render.res)
-            larger  (math.min fitto.x fitto.y)]
-        (each [i g (ipairs games)] 
-          (set (g.selected g.hovering) (values false false)))
-        (set g.selected true)
-        (set upscale (* larger downscale))
-        (set screen render)))))
+(fn love.mousepressed [...] 
+  (local game (cart:mousepressed ...))
+  (when game 
+    (let [view    (Vec:new 1600 1200)
+          render  (CRT:new game)
+          fitto   (/ view render.res)
+          larger  (math.min fitto.x fitto.y)]
+      (set upscale larger)
+      (set screen render))))

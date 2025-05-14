@@ -1,9 +1,7 @@
-(local Games {:a :balahtzee :b :afflictirelixir})
-(local Game (require (.. :src. Games.b :.game)))
 (local Vec (require :src.vec))
 (local Screen {}) (set Screen.__index Screen)
 
-(fn Screen.new [!]
+(fn Screen.new [! Game]
   (let [res     (Vec:new 266 200)
         game    (Game:new)
         units   game.units
@@ -40,7 +38,6 @@
   (love.graphics.pop)
   (love.graphics.push)
   (love.graphics.setColor 0 1 0 1)
-  (love.graphics.scale 2 2)
   (when _G.DEBUG (love.graphics.print (..  
     "  FPS:" (love.timer.getFPS))))
   (love.graphics.setColor 1 1 1 1)

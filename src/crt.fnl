@@ -1,9 +1,8 @@
 (local Vec (require :src.vec))
 (local CRT {}) (set CRT.__index CRT)
 
-(fn CRT.new [! Game]
+(fn CRT.new [! game]
   (let [res     (Vec:new 266 200)
-        game    (Game:new)
         units   game.units
         convert (/ res units)
         scale   (math.min convert.x convert.y)
@@ -47,7 +46,5 @@
   (love.graphics.setShader !.pfx)
   (love.graphics.draw !.screen)
   (love.graphics.setShader))
-
-(fn CRT.keypressed [! key] (!.game:keypressed key))
 
 CRT

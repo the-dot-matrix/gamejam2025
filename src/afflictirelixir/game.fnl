@@ -37,7 +37,6 @@
   (set !.spleen   (Entity:new :spleen   (tIndex 6 11)))
   (set !.galblad  (Entity:new :galblad  (tIndex 15 11)))
   (set !.bg       (Entity:new))
-  (!:keypressed)
   !)
 
 (fn Game.update [! dt]
@@ -73,7 +72,5 @@
   (love.graphics.pop)
   (love.graphics.pop)
   (love.graphics.pop))
-
-(fn Game.keypressed [! key])
 
 Game

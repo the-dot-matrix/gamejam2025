@@ -37,7 +37,7 @@
       (set g.hovering (not g.selected))
       (set g.hovering false))))
 
-(fn CART.mousepressed [! x y button]
+(fn CART.mousepressed [! x y]
   (var game nil)
   (each [i g (ipairs !.games)]
     (local (tx ty) (!.texttrans:inverseTransformPoint x y))

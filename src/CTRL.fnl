@@ -15,6 +15,11 @@
         ctrl {: offset : mapI : mapO : overlay : hi : presses}]
     (setmetatable ctrl !)))
 
+(fn CTRL.update [! ctrl hid]
+  (when (and (. !.mapO ctrl) hid) (tset !.mapO ctrl hid))
+  (set !.mapI (accumulate [m {} k v (pairs !.mapO) ] 
+    (do (tset m v k) m))))
+
 (fn CTRL.draw [!]
   (love.graphics.push)
   (love.graphics.setColor 0.4 0.4 0.4 1)

@@ -5,7 +5,7 @@
 (var (FONT font cart crt ctrl game frame sdown sup) (values))
 
 (fn boot [Game]
-  (set game (Game:new))
+  (set game (Game:new ctrl.mapO))
   (let [view    (Vec:new 1600 1200)
         render  (CRT:new game)
         fitto   (/ view render.res)
@@ -23,7 +23,7 @@
         smaller (math.min fitto.x fitto.y)
         win     (* res smaller)]
     (set FONT (love.graphics.newFont 42))
-    (set font (love.graphics.newFont 10 :mono))
+    (set font (love.graphics.newFont 9 :mono))
     (font:setFilter :nearest)
     (set sdown smaller)
     (set frame image)

@@ -7,14 +7,23 @@
         r       0
         scale   (Vec:new 1 1)
         origin  (Vec:new 0 0)
-        sprite  (Sprite:new ?name)]
-    (setmetatable {: pos : r : scale : origin : sprite} !)))
+        sprite  (Sprite:new ?name)
+        anim    {}
+        state   :static]
+    (setmetatable {: pos : r : scale : origin : sprite : anim : state} !)))
+
+(fn Entity.setAnim [! name f1 f2]
+  (tset !.anim name { : f1 : f2}))
+
+(fn Entity.setState [! state]
+  (set !.state state))
 
 ;; pass in a logic class that controls how each entity works?
 ;; brain behavior, heart behavior etc.
 
 (fn Entity.update [! dt]
-  (!.sprite:update dt)
+  (local anim (. !.anim !.state))
+  (!.sprite:update dt anim)
   )
 
 (fn Entity.draw [!]
@@ -22,7 +31,8 @@
         r       !.r
         (sX sY) (values !.scale.x !.scale.y)
         (oX oY) (values !.origin.x !.origin.y)
-        sprite  !.sprite]
-  (!.sprite:draw  x y r sX sY oX oY)))
+        sprite  !.sprite
+        anim    (. !.anim !.state)]
+  (!.sprite:draw  x y r sX sY oX oY anim)))
 
 Entity

@@ -33,6 +33,9 @@
   (spawnBox !.trans 3.5 6.5 5.5 9.5)
   (spawnBox !.trans 0.5 6.5 2.5 9.5)
   (set !.heart    (Entity:new :heart    (tIndex 6 1)))
+  (!.heart:setAnim :static 1 6)
+  (!.heart:setAnim :walk 7 12)
+  (!.heart:setState :walk) ;; swap between :walk and :static
   (set !.brain    (Entity:new :brain    (tIndex 15 1)))
   (set !.spleen   (Entity:new :spleen   (tIndex 6 11)))
   (set !.galblad  (Entity:new :galblad  (tIndex 15 11)))
@@ -51,7 +54,7 @@
   (when !.tick? (set !.tick 0)))
 
 (fn Game.draw [! scale]
-  (love.graphics.clear 0.16 0.16 0.16)
+  (love.graphics.clear 0.65 0.65 0.65)
   (love.graphics.push)
   (love.graphics.translate 
     (* scale !.border.x)
@@ -59,11 +62,13 @@
   (love.graphics.push)
   (love.graphics.translate (/ -16 4) (/ -16 4))
   (!.board:draw scale)
+  ;; entity draws
   (!.heart:draw) 
   (!.brain:draw)
   (!.spleen:draw) 
   (!.galblad:draw)
   (!.wizard:draw)
+  ;; end of entity draws
   (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ -16 4))
   (!.cards:draw scale)
@@ -73,6 +78,9 @@
   (!.trans:draw scale)
   (love.graphics.pop)
   (love.graphics.pop)
-  (love.graphics.pop))
+  (love.graphics.pop)
+  )
+
+
 
 Game

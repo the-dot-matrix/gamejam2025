@@ -38,20 +38,26 @@
     (if (not goodPadding?) (error (.. "poorly padded " name)))
     (setmetatable sprite !)))
 
-(fn Sprite.update [! dt]
-  (set !.frame (% (+ !.frame (* dt 12)) (length !.quads))))
+(fn Sprite.getQuads [! f1 f2]
+  (fcollect [index f1 f2 1]
+    (. !.quads index)))
+
+(fn Sprite.update [! dt ?anim]
+  (local anim (if ?anim (fcollect [i ?anim.f1 ?anim.f2 1] (. !.quads i)) !.quads))
+  (set !.frame (% (+ !.frame (* dt 12)) (length anim))))
 
 (fn Sprite.draw [! ?X ?Y ?R ?scaleX ?scaleY 
-                ?originX ?originY]
+                ?originX ?originY ?anim]
   (let [x       (or ?X 0)
         y       (or ?Y 0)
         r       (or ?R 0)
         sX      (or ?scaleX 1)
         sY      (or ?scaleY 1)
         oX      (or ?originX 0)
-        oY      (or ?originY 0)]
+        oY      (or ?originY 0)
+        anim   (if ?anim (fcollect [i ?anim.f1 ?anim.f2 1] (. !.quads i)) !.quads)]
     (love.graphics.draw !.image 
-      (. !.quads (+ (math.floor !.frame) 1))
+      (. anim (+ (math.floor !.frame) 1))
       x y r sX sY oX oY)))
 
 Sprite

@@ -1,7 +1,6 @@
 (local Vec (require :src.vec))
 (local Line (require :src.line))
 (local Spawner (require :src.spawner))
-(local Sprite (require :src.afflictirelixir.sprite))
 (local Entity (require :src.afflictirelixir.entity))
 (local Game {}) (set Game.__index Game)
 

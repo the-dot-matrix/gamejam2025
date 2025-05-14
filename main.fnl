@@ -2,7 +2,7 @@
 (local CRT (require :src.CRT))
 (local CTRL (require :src.CTRL))
 (local Vec (require :src.vec))
-(var (cart crt ctrl game overlay downscale upscale) (values))
+(var (FONT font cart crt ctrl game frame sdown sup) (values))
 
 (fn boot [Game]
   (set game (Game:new))
@@ -10,7 +10,7 @@
         render  (CRT:new game)
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)]
-    (set upscale larger)
+    (set sup larger)
     (set crt render)
     (ctrl:register game)))
 
@@ -21,13 +21,13 @@
         display (Vec:new w h)
         fitto   (/ display res)
         smaller (math.min fitto.x fitto.y)
-        win     (* res smaller)
-        font    (love.graphics.newFont 42 :mono)]
+        win     (* res smaller)]
+    (set FONT (love.graphics.newFont 42))
+    (set font (love.graphics.newFont 10 :mono))
     (font:setFilter :nearest)
-    (love.graphics.setFont font)
-    (set downscale smaller)
-    (set overlay image)
-    (set cart (CART:new downscale))
+    (set sdown smaller)
+    (set frame image)
+    (set cart (CART:new sdown))
     (set ctrl (CTRL:new))
     (boot (cart:update :_controller))))
 
@@ -35,13 +35,15 @@
 
 (fn love.draw []
   (love.graphics.push)
-  (love.graphics.scale downscale downscale)
+  (love.graphics.scale sdown sdown)
   (love.graphics.push)
   (love.graphics.translate 900 50)
-  (love.graphics.scale upscale upscale)  
+  (love.graphics.scale sup sup)
+  (love.graphics.setFont font)  
   (when crt (crt:draw))
   (love.graphics.pop)
-  (love.graphics.draw overlay)
+  (love.graphics.setFont FONT)
+  (love.graphics.draw frame)
   (ctrl:draw)
   (love.graphics.pop)
   (cart:draw))

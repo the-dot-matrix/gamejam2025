@@ -1,6 +1,6 @@
+(local CART (require :src.CART))
+(local CRT (require :src.CRT))
 (local Vec (require :src.vec))
-(local CRT (require :src.crt))
-(local Cart (require :src.cart))
 (local games [])
 (var (cart screen upscale overlay downscale) (values))
 
@@ -17,7 +17,7 @@
     (love.graphics.setFont font)
     (set downscale smaller)
     (set overlay image)
-    (set cart (Cart:new downscale))))
+    (set cart (CART:new downscale))))
 
 (fn love.update [dt] (when screen (screen:update dt)))
 

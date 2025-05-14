@@ -1,6 +1,6 @@
-(local Cart {}) (set Cart.__index Cart)
+(local CART {}) (set CART.__index CART)
 
-(fn Cart.new [! scale]
+(fn CART.new [! scale]
   (local ! (setmetatable {} !))
   (let [files   (love.filesystem.getDirectoryItems :src)]
     (set !.games [])
@@ -14,7 +14,7 @@
     (set !.scale !.scale)
     !))
 
-(fn Cart.draw [!]
+(fn CART.draw [!]
   (love.graphics.push)
   (love.graphics.applyTransform !.texttrans)
   (each [i g (ipairs !.games)]
@@ -29,7 +29,7 @@
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop))
 
-(fn Cart.mousemoved [! x y]
+(fn CART.mousemoved [! x y]
   (each [i g (ipairs !.games)]
     (local (tx ty) (!.texttrans:inverseTransformPoint x y))
     (if (and  (> tx g.x) (< tx (+ g.x g.w))
@@ -37,7 +37,7 @@
       (set g.hovering (not g.selected))
       (set g.hovering false))))
 
-(fn Cart.mousepressed [! x y button]
+(fn CART.mousepressed [! x y button]
   (var game nil)
   (each [i g (ipairs !.games)]
     (local (tx ty) (!.texttrans:inverseTransformPoint x y))
@@ -49,4 +49,4 @@
         (set game (require (.. :src. g.name :.game)))))
   game)
 
-Cart
+CART

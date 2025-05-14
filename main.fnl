@@ -40,11 +40,13 @@
   (love.graphics.push)
   (love.graphics.applyTransform texttrans)
   (each [i g (ipairs games)]
-    (if g.selected (love.graphics.setColor 0 0 0 0.4)
-                   (love.graphics.setColor 1 1 1 0.4))
+    (if g.hovering (love.graphics.setColor 0 0 0 0.3)
+      (if g.selected  (love.graphics.setColor 0 0 0 0.9)
+                      (love.graphics.setColor 1 1 1 0.6)))
     (love.graphics.rectangle :fill g.x g.y g.w g.h)
-    (if g.selected (love.graphics.setColor 1 1 1 0.8)
-                   (love.graphics.setColor 0 0 0 0.8))
+    (if g.hovering (love.graphics.setColor 1 1 1 0.3)
+      (if g.selected  (love.graphics.setColor 1 1 1 0.9)
+                      (love.graphics.setColor 0 0 0 0.6)))
     (love.graphics.print g.name g.x g.y))
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop))
@@ -53,6 +55,14 @@
   (when (= key :escape) (love.event.push :quit))
   (when (and screen screen.keypressed) 
     (screen:keypressed key)))
+
+(fn love.mousemoved [x y]
+  (each [i g (ipairs games)]
+    (local (tx ty) (texttrans:inverseTransformPoint x y))
+    (if (and  (> tx g.x) (< tx (+ g.x g.w))
+                (> ty g.y) (< ty (+ g.y g.h)))
+      (set g.hovering (not g.selected))
+      (set g.hovering false))))
 
 (fn love.mousepressed [x y button]
   (each [i g (ipairs games)]
@@ -64,7 +74,8 @@
             render  (Screen:new game)
             fitto   (/ view render.res)
             larger  (math.min fitto.x fitto.y)]
-        (each [i g (ipairs games)] (set g.selected false))
+        (each [i g (ipairs games)] 
+          (set (g.selected g.hovering) (values false false)))
         (set g.selected true)
         (set upscale (* larger downscale))
         (set screen render)))))

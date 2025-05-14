@@ -58,3 +58,5 @@
       (set crt render)
       (ctrl:register game)))
   (ctrl:mousepressed ...))
+
+(fn love.mousereleased [...] (ctrl:mousereleased ...))

@@ -1,5 +1,5 @@
 (local Vec (require :src.vec))
-(local Screen (require :src.screen))
+(local CRT (require :src.crt))
 (local games [])
 (var (screen upscale overlay downscale texttrans) (values))
 
@@ -71,7 +71,7 @@
                 (> ty g.y) (< ty (+ g.y g.h)))
       (let [game    (require (.. :src. g.name :.game))
             view    (Vec:new 1600 1200)
-            render  (Screen:new game)
+            render  (CRT:new game)
             fitto   (/ view render.res)
             larger  (math.min fitto.x fitto.y)]
         (each [i g (ipairs games)] 

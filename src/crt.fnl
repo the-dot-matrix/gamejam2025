@@ -1,7 +1,7 @@
 (local Vec (require :src.vec))
-(local Screen {}) (set Screen.__index Screen)
+(local CRT {}) (set CRT.__index CRT)
 
-(fn Screen.new [! Game]
+(fn CRT.new [! Game]
   (let [res     (Vec:new 266 200)
         game    (Game:new)
         units   game.units
@@ -20,9 +20,9 @@
     (screen:setFilter :nearest :nearest 0)
     (setmetatable s !)))
 
-(fn Screen.update [! dt] (!.game:update dt))
+(fn CRT.update [! dt] (!.game:update dt))
 
-(fn Screen.draw [!]
+(fn CRT.draw [!]
   (love.graphics.push)
   (love.graphics.origin)
   (love.graphics.setCanvas !.native)
@@ -48,6 +48,6 @@
   (love.graphics.draw !.screen)
   (love.graphics.setShader))
 
-(fn Screen.keypressed [! key] (!.game:keypressed key))
+(fn CRT.keypressed [! key] (!.game:keypressed key))
 
-Screen
+CRT

@@ -2,8 +2,9 @@
 (local Sprite (require :src.afflictirelixir.sprite))
 (local Vec (require :src.vec))
 
-(fn Entity.new [! ?name ?X ?Y ]
-  (let [pos     (Vec:new (or ?X 0) (or ?Y 0))
+(fn Entity.new [! ?name ?X ?Y]
+  (let [(x y)   (values (or ?X 0) (or ?Y 0))
+        pos     (Vec:new (values (* x 16) ( * y 16)))
         r       0
         scale   (Vec:new 1 1)
         origin  (Vec:new 0 0)
@@ -17,14 +18,13 @@
 
 (fn Entity.setState [! state]
   (set !.state state))
-
+ 
 ;; pass in a logic class that controls how each entity works?
 ;; brain behavior, heart behavior etc.
 
 (fn Entity.update [! dt]
   (local anim (. !.anim !.state))
-  (!.sprite:update dt anim)
-  )
+  (!.sprite:update dt anim))
 
 (fn Entity.draw [!]
   (let [(x y)   (values !.pos.x !.pos.y)

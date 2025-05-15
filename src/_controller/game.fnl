@@ -44,8 +44,7 @@
   (love.graphics.draw !.map !.c.x !.c.y 0 !.s.x !.s.y)
   (love.graphics.setBlendMode :alpha)
   (each [name m (pairs !.maps)]
-    (let [x     m.x
-          x     (if (= m.a :right) (- (+ x !.units.x) m.w) x)]
+    (let [x (if (= m.a :right) (- (+ m.x !.units.x) m.w) m.x)]
     (if m.hovering (love.graphics.setColor 0 0 0 0.33)
       (if m.selected  (love.graphics.setColor 0 0 0 0.99)
                       (love.graphics.setColor 1 1 1 0.66)))
@@ -63,17 +62,19 @@
 
 (fn Game.mousemoved [! x y]
   (each [name m (pairs !.maps)]
-    (if (and  (> x m.x) (< x (+ m.x m.w))
-              (> y m.y) (< y (+ m.y m.h)))
-      (set m.hovering (not m.selected))
-      (set m.hovering false))))
+    (let [mx (if (= m.a :right) (- (+ m.x !.units.x) m.w) m.x)]
+      (if (and  (> x mx) (< x (+ mx m.w))
+                (> y m.y) (< y (+ m.y m.h)))
+        (set m.hovering (not m.selected))
+        (set m.hovering false)))))
 
 (fn Game.mousepressed [! x y]
   (each [name m (pairs !.maps)]
-    (when (and  (> x m.x) (< x (+ m.x m.w))
-                (> y m.y) (< y (+ m.y m.h)))
-      (each [name m (pairs !.maps)]
-        (set (m.selected m.hovering) (values false false)))
-      (set (. !.maps name :selected) true))))
+    (let [mx (if (= m.a :right) (- (+ m.x !.units.x) m.w) m.x)]
+      (when (and  (> x mx) (< x (+ mx m.w))
+                  (> y m.y) (< y (+ m.y m.h)))
+        (each [name m (pairs !.maps)]
+          (set (m.selected m.hovering) (values false false)))
+        (set (. !.maps name :selected) true)))))
 
 Game

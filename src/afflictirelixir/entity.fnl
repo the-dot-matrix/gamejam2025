@@ -64,4 +64,10 @@
         anim    (. !.anim !.state)]
   (!.sprite:draw  x y r sX sY oX oY anim)))
 
+(fn Entity.keypressed [! key]
+  (print "pressed" key))
+
+(fn Entity.keyreleased [! key]
+  (print "released" key))
+
 Entity

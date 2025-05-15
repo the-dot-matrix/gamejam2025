@@ -15,7 +15,7 @@
 
 (fn Game.new [!]
   (local ! (setmetatable {} !))
-  (set !.area (Vec:new 256 192)) ; 16 12
+  (set !.area (Vec:new 256 200))
   (set !.border (Vec:new 5 0))
   (set !.units (+ !.area (* !.border 2)))
   (set !.bounds (Spawner:new Line))

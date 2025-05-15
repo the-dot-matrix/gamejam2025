@@ -4,7 +4,6 @@
 (local Entity (require :src.afflictirelixir.entity))
 (local Game {}) (set Game.__index Game)
 
-
 (fn tIndex [a ...]
   (local tileLength 16)
   (if a (unpack [(* a 16) (tIndex ...)]) nil))
@@ -42,25 +41,25 @@
   (set !.galblad  (Entity:new :galblad  9 10  :enemy))
   (set !.wizard   (Entity:new :wizard   4 5   :chara))
   (set !.entities [!.heart !.brain !.spleen !.galblad !.wizard])
+  (fn Game.grabETypeEntity [entities eType]
+    (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))
   (fn setAnimEnemy [entities]
-    (local enemies (icollect [_ v (ipairs entities)] (if (= v.eType :enemy) v)))
-    (each [_ v (ipairs enemies)]
+    (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
       (v:genAnim {:static [1 6] :walk [7 12]})))
   (setAnimEnemy !.entities)
   ;;setStateEnemy useful for future in game.update potentially
   (fn setStateEnemy [entities state]
-    (local enemies (icollect [_ v (ipairs entities)] (if (= v.eType :enemy) v)))
-    (each [_ v (ipairs enemies)]
+    (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
       (v:setState state)))
   (setStateEnemy !.entities :walk) ;; swap between :walk and :static
   (set !.bg       (Entity:new))
   !)
 
 (fn Game.update [! dt]
-  (!.heart:update dt)
-  (!.brain:update dt)
-  (!.spleen:update dt)
-  (!.galblad:update dt))
+  (fn grabETypeEntity [entities eType]
+    (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))
+  (each [_ v (ipairs (grabETypeEntity !.entities :enemy))]
+    (v:update dt)))
 
 (fn Game.draw [! scale]
   (love.graphics.clear 0.65 0.65 0.65)
@@ -72,11 +71,8 @@
   (love.graphics.translate (/ -16 4) (/ -16 2))
   (!.board:draw scale)
   ;; entity draws
-  (!.heart:draw) 
-  (!.brain:draw)
-  (!.spleen:draw) 
-  (!.galblad:draw)
-  (!.wizard:draw)
+  (each [_ v (ipairs !.entities)]
+    (v:draw))
   ;; end of entity draws
   (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ -16 4))

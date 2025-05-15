@@ -22,7 +22,6 @@
     (setmetatable {: pos : sprite : eType
       : anim : state : pframe : frame : direc} !)))
 
-
 (fn Entity.setAnim [! name f1 f2]
   (tset !.anim name { : f1 : f2}))
 

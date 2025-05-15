@@ -45,7 +45,10 @@
   (enemyAnimSet !.brain)
   (enemyAnimSet !.spleen)
   (enemyAnimSet !.galblad)
-  (!.heart:setState :walk) ;; swap between :walk and :static
+  (!.heart:setState :walk)
+  (!.brain:setState :walk)
+  (!.spleen:setState :walk)
+  (!.galblad:setState :walk) ;; swap between :walk and :static
   (set !.bg       (Entity:new))
   !)
 

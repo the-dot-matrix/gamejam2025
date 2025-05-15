@@ -85,7 +85,6 @@
 (fn Game.keypressed [! k] (when !.rebinding? (!:rebind k)))
 
 (fn Game.rebind [! binding]
-  (print !.rebinding? binding)
   (var mt? true)
   (each [name m (pairs !.maps)]
       (set (m.selected m.hovering) (values false false))

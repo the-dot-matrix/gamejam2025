@@ -22,7 +22,7 @@
         state   :default
         pframe  0
         frame   0
-        direc   1
+        direc   (Vec:new 1 0)
         eType   (or ?eType :nil)]
     (setmetatable {: pos : sprite : eType
       : anim : state : pframe : frame : direc} !)))
@@ -41,15 +41,13 @@
 ;; brain behavior, heart behavior etc.
 
 (fn Entity.move [! direc]
-
-    (set !.pos (+ !.pos (tileB !.direc 0))))
+    (set !.pos (+ !.pos (tileB (values !.direc)))))
 
 (fn Entity.update [! dt]
+  (local anim (. !.anim !.state))
+  (!.sprite:update dt anim)
   (set !.frame (% (+ !.frame (* dt 12)) 12))
   (when (not= (math.floor !.frame) (math.floor !.pframe))
-    (local anim (. !.anim !.state))
-    (!.sprite:update dt anim)
-
     (case !.eType
       :enemy
       (when (= (math.floor !.frame) 0)
@@ -73,23 +71,20 @@
 
 (fn Entity.keypressed [! key]
   (var keyUsed? false)
-  (each [k _ (pairs pressed)] 
-    (set keyUsed? (= key k)))
+  (each [k _ (pairs pressed)]
+    (if (not keyUsed?) (set keyUsed? true)))
   (when keyUsed? 
     ; (set pressed.key.press? true)
     ; (if (not pressed.key.enact?)
     ;   (print "pressed" key)
     ;   (set pressed.key.enact? true))
-    (print "pressed" key)
-    ))
+    (print "pressed" key)))
 
 (fn Entity.keyreleased [! key]
   (var keyUsed? false)
   (each [k _ (pairs pressed)] 
-    (set keyUsed? (= key k)))
+    (if (not keyUsed?) (set keyUsed? true)))
   (when keyUsed?
-    (print "released+++++" key)
-    )
-  (print "released" key))
+    (print "released+++++" key)))
 
 Entity

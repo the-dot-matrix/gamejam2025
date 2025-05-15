@@ -83,12 +83,12 @@
   (love.graphics.pop)
   (love.graphics.pop))
 
-(fn Game.keypressed [! originalKey mapped]
+(fn Game.keypressed [! key]
   (each [_ v (ipairs !.entities)]
-    (v:keypressed mapped)))
+    (v:keypressed key)))
 
-(fn Game.keyreleased [! originalKey mapped]
+(fn Game.keyreleased [! key]
   (each [_ v (ipairs !.entities)]
-    (v:keyreleased mapped)))
+    (v:keyreleased key)))
 
 Game

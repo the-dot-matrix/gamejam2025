@@ -82,7 +82,7 @@
           (set (. !.maps name :selected) true)
           (set !.rebinding? name))))))
 
-(fn Game.keypressed [! k] (when !.rebinding? (!:rebind k)))
+(fn Game.keypressed [! k m] (when !.rebinding? (!:rebind m)))
 
 (fn Game.rebind [! binding]
   (var mt? true)

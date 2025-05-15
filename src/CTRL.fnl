@@ -44,13 +44,13 @@
   (let [mapped? (. !.mapI key)] 
     (when mapped? (set (. !.presses mapped?) true))
     (when (and !.handler? !.keypressed?) 
-      (!.keypressed? !.handler? key mapped?))))
+      (!.keypressed? !.handler? mapped? key))))
 
 (fn CTRL.keyreleased [! key]
   (let [mapped? (. !.mapI key)] 
     (when mapped? (set (. !.presses mapped?) false))
     (when (and !.handler? !.keyreleased?) 
-      (!.keyreleased? !.handler? key mapped?))))
+      (!.keyreleased? !.handler? mapped? key))))
 
 (fn CTRL.mousemoved [! x y]
   (when (and !.handler? !.mousemoved?)
@@ -63,7 +63,7 @@
   (let [mapped? (. !.mapI click)] 
     (when mapped? (set (. !.presses mapped?) true)
       (when (and !.handler? !.keypressed?) 
-        (!.keypressed? !.handler? click mapped?))))
+        (!.keypressed? !.handler? mapped? click))))
   (when (and !.handler? !.mousepressed?)
     (local (tx ty) (if !.transform? 
       (!.transform?:inverseTransformPoint x y)
@@ -74,6 +74,6 @@
   (let [mapped? (. !.mapI click)] 
     (when mapped? (set (. !.presses mapped?) false)
       (when (and !.handler? !.handler? !.keyreleased?) 
-        (!.keyreleased? !.handler? click mapped?)))))
+        (!.keyreleased? !.handler? mapped? click)))))
 
 CTRL

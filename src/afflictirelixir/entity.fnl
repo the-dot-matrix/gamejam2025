@@ -5,10 +5,6 @@
 (local (left up right down) (values 6 1 16 12))
 ;; 0 9 0 10
 
-(local pressed {:u {:press? false :enact? false}
-                :d {:press? false :enact? false}
-                :l {:press? false :enact? false}
-                :r {:press? false :enact? false}})
 
 (fn tileB [tx ty]
  (Vec:new (values (* tx 16) ( * ty 16))))
@@ -40,9 +36,6 @@
 ;; pass in a logic class that controls how each entity works?
 ;; brain behavior, heart behavior etc.
 
-(fn Entity.move [! direc]
-    (set !.pos (+ !.pos (tileB (values !.direc)))))
-
 (fn Entity.update [! dt]
   (local anim (. !.anim !.state))
   (!.sprite:update dt anim)
@@ -50,12 +43,7 @@
   (when (not= (math.floor !.frame) (math.floor !.pframe))
     (case !.eType
       :enemy
-      (when (= (math.floor !.frame) 0)
-        (if (= !.pos.x (* (- right 1) 16))
-          (set !.direc -1))
-        (if (= !.pos.x (* left 16))
-          (set !.direc 1))
-        !.move)
+      nil
       :chara
       nil))
   (set !.pframe !.frame))
@@ -69,23 +57,27 @@
         anim    (. !.anim !.state)]
   (!.sprite:draw  x y r sX sY oX oY anim)))
 
+(local keys [:u :d :l :r])
+
 (fn Entity.keypressed [! key]
   (when (= !.eType :chara)
     (var keyUsed? false)
-    (each [k _ (pairs pressed)]
-      (if (= k key) (set keyUsed? true)))
-    (when keyUsed? 
-      ; (set pressed.key.press? true)
-      ; (if (not pressed.key.enact?)
-      ;   (print "pressed" key)
-      ;   (set pressed.key.enact? true))
-      (print "pressed" key))))
+    (each [_ v (ipairs keys)]
+      (if (= v key) (set keyUsed? true)))
+    (when keyUsed?
+      (when (= !.eType :chara)
+        (case key 
+          :u  (set !.pos (+ !.pos (tileB 0 -1))) 
+          :l  (set !.pos (+ !.pos (tileB -1 0)))
+          :d  (set !.pos (+ !.pos (tileB 0 1)))
+          :r  (set !.pos (+ !.pos (tileB 1 0)))))
+      )))
 
 (fn Entity.keyreleased [! key]
   (when (= !.eType :chara)
     (var keyUsed? false)
-    (each [k _ (pairs pressed)] 
-      (if (= k key) (set keyUsed? true)))
+    (each [_ v (ipairs keys)]
+      (if (= v key) (set keyUsed? true)))
     (when keyUsed?
       (print "released+++++" key)))
   )

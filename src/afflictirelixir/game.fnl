@@ -32,18 +32,18 @@
   (spawnBox !.trans 2 9 4 12)
   (spawnBox !.trans 3.5 6.5 5.5 9.5)
   (spawnBox !.trans 0.5 6.5 2.5 9.5)
-  (fn enemyAnim [enemy anims]
-    (each [k v (pairs anims)]
-      (enemy:setAnim  k (. v 1) (. v 2))))
   (set !.heart  (Entity:new :heart 6 1))
   (set !.brain    (Entity:new :brain    15 1))
   (set !.spleen   (Entity:new :spleen   6 11))
   (set !.galblad  (Entity:new :galblad  15 11))
   (set !.wizard   (Entity:new :wizard   10 6))
-  (enemyAnim !.heart {:static [1 6] :walk [7 12]})
-  (enemyAnim !.brain {:static [1 6] :walk [7 12]})
-  (enemyAnim !.spleen {:static [1 6] :walk [7 12]})
-  (enemyAnim !.galblad {:static [1 6] :walk [7 12]})
+
+  (fn enemyAnimSet [entity]
+    (entity:genAnim {:static [1 6] :walk [7 12]}))
+  (enemyAnimSet !.heart)
+  (enemyAnimSet !.brain)
+  (enemyAnimSet !.spleen)
+  (enemyAnimSet !.galblad)
   (!.heart:setState :walk) ;; swap between :walk and :static
   (set !.bg       (Entity:new))
   !)

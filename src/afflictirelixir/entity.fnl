@@ -13,8 +13,13 @@
         state   :static]
     (setmetatable {: pos : r : scale : origin : sprite : anim : state} !)))
 
+
 (fn Entity.setAnim [! name f1 f2]
   (tset !.anim name { : f1 : f2}))
+
+(fn Entity.genAnim [! anims]
+  (each [k v (pairs anims)]
+    (!:setAnim  k (. v 1) (. v 2))))
 
 (fn Entity.setState [! state]
   (set !.state state))

@@ -32,10 +32,13 @@
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop))
 
-(fn CTRL.register [! handler?]
+(fn CTRL.register [! handler? transform?]
   (set !.handler? handler?)
-  (set !.keypressed? (. handler? :keypressed))
-  (set !.keyreleased? (. handler? :keyreleased)))
+  (set !.transform? transform?)
+  (set !.keypressed?    (. handler? :keypressed))
+  (set !.keyreleased?   (. handler? :keyreleased))
+  (set !.mousemoved?    (. handler? :mousemoved))
+  (set !.mousepressed?  (. handler? :mousepressed)))
 
 (fn CTRL.keypressed [! key]
   (let [mapped? (. !.mapI key)] 
@@ -49,13 +52,23 @@
       (when (and !.handler? !.keyreleased?) 
         (!.keyreleased? !.handler? mapped?)))))
 
-(fn CTRL.mousemoved [! x y])
+(fn CTRL.mousemoved [! x y]
+  (when (and !.handler? !.mousemoved?)
+    (local (tx ty) (if !.transform? 
+      (!.transform?:inverseTransformPoint x y)
+      (values x y))) 
+    (!.mousemoved? !.handler? tx ty)))
 
 (fn CTRL.mousepressed [! x y click]
   (let [mapped? (. !.mapI click)] 
     (when mapped? (set (. !.presses mapped?) true)
       (when (and !.handler? !.keypressed?) 
-        (!.keypressed? !.handler? mapped?)))))
+        (!.keypressed? !.handler? mapped?))))
+  (when (and !.handler? !.mousepressed?)
+    (local (tx ty) (if !.transform? 
+      (!.transform?:inverseTransformPoint x y)
+      (values x y))) 
+    (!.mousepressed? !.handler? tx ty click)))
 
 (fn CTRL.mousereleased [! x y click]
   (let [mapped? (. !.mapI click)] 

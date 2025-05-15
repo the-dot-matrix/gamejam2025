@@ -10,9 +10,9 @@
         render  (CRT:new game)
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)]
-    (set sup (love.math.newTransform 0 0 0 larger larger))
+    (set sup (love.math.newTransform 900 50 0 larger larger))
     (set crt render)
-    (ctrl:register game)))
+    (ctrl:register game sup)))
 
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)
@@ -37,7 +37,6 @@
   (love.graphics.push)
   (love.graphics.applyTransform sdown)
   (love.graphics.push)
-  (love.graphics.translate 900 50)
   (love.graphics.applyTransform sup)
   (love.graphics.setFont font)  
   (when crt (crt:draw))
@@ -63,7 +62,7 @@
 (fn love.mousepressed [x y ...] 
   (local (tx ty) (sdown:inverseTransformPoint x y))
   (local Game (cart:mousepressed tx ty ...))
-  (when Game (boot Game))
-  (ctrl:mousepressed tx ty ...))
+  (ctrl:mousepressed tx ty ...)
+  (when Game (boot Game)))
 
 (fn love.mousereleased [...] (ctrl:mousereleased ...))

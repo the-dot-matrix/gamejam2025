@@ -31,10 +31,8 @@
   (love.graphics.pop)
   (love.graphics.setCanvas !.screen)
   (love.graphics.clear 0.02 0.02 0.02)
-  (love.graphics.push)
   (love.graphics.translate !.mid.x !.mid.y)
   (love.graphics.draw !.native)
-  (love.graphics.pop)
   (love.graphics.push)
   (love.graphics.setColor 0 1 0 1)
   (when _G.DEBUG (love.graphics.print (..  

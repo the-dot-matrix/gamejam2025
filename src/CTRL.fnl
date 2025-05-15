@@ -1,7 +1,7 @@
 (local Vec (require :src.vec))
 (local CTRL {}) (set CTRL.__index CTRL)
 
-(fn CTRL.new [! scale]
+(fn CTRL.new [!]
   (let [offset (Vec:new 25 1075)
         mapO {:u :w       :r :d     :d :s       :l :a 
               :x :lshift  :y :space :a :return  :b :rshift

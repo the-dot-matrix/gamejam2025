@@ -16,10 +16,11 @@
   (let [view    (Vec:new 1600 1200)
         render  (CRT:new game)
         fitto   (/ view render.res)
-        larger  (math.min fitto.x fitto.y)]
-    (set sup (love.math.newTransform 900 50 0 larger larger))
+        larger  (math.min fitto.x fitto.y)
+        t       (Vec:new 900 50)]
+    (set sup (love.math.newTransform t.x t.y 0 larger larger))
     (set crt render)
-    (ctrl:register game sup)))
+    (ctrl:register game render.scale)))
 (fn safe [f ...] 
   (let [bad #(boot :_bad_screen_of_sad $... (fennel.traceback))
         fixf  #(love.graphics.setCanvas)
@@ -69,13 +70,15 @@
 
 (fn love.mousemoved [x y ...]
   (local (tx ty) (sdown:inverseTransformPoint x y))
+  (local (ttx tty) (sup:inverseTransformPoint tx ty))
   (safe cart.mousemoved cart tx ty ...) 
-  (safe ctrl.mousemoved ctrl tx ty ...))
+  (safe ctrl.mousemoved ctrl ttx tty ...))
 
 (fn love.mousepressed [x y ...] 
   (local (tx ty) (sdown:inverseTransformPoint x y))
+  (local (ttx tty) (sup:inverseTransformPoint tx ty))
   (local name (safe cart.mousepressed cart tx ty ...))
-  (safe ctrl.mousepressed ctrl tx ty ...)
+  (safe ctrl.mousepressed ctrl ttx tty ...)
   (when name (safe #(boot name))))
 
 (fn love.mousereleased [...] 

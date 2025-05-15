@@ -2,7 +2,7 @@
 (local Game {}) (set Game.__index Game)
 
 (fn Game.new [! error? trace?] 
-  (let [units     (Vec:new 266 200)
+  (let [units     (Vec:new 320 240)
         gradient  (love.image.newImageData 1 2)
         g {: units}]
     (gradient:setPixel 0 0 (/ 89 255) (/ 157 255) (/ 220 255))
@@ -24,6 +24,6 @@
     "clicking its box on the shelf again\n\n")
     0 8 !.units.x :center)
   (love.graphics.printf (.. !.msg "\n" !.trace) 
-    16 48 (/ !.units.x 2) :left))
+    16 64 (/ !.units.x 2) :left))
 
 Game

@@ -4,7 +4,7 @@
 (fn CRT.new [! game]
   (let [res     (Vec:new 1600 1200) 
         dpi     (Vec:new 640 480)
-        perfect (Vec:new 266 200)
+        perfect (Vec:new 320 240)
         d2irl   (/ res dpi)
         p2d     (/ dpi perfect)
         units   (or game.units perfect)
@@ -26,7 +26,7 @@
                   : tv      : p480    : console 
                   : d2irl   : p2d     : u2p   }]
     (console:setFilter :nearest :nearest 0)
-    (p480:setFilter :linear :linear 0)
+    (p480:setFilter :nearest :nearest 0)
     (tv:setFilter :linear :nearest 0)
     (setmetatable s !)))
 

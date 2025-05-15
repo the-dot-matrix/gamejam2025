@@ -37,7 +37,7 @@
         smaller (math.min fitto.x fitto.y)
         win     (* res smaller)]
     (set FONT (love.graphics.newFont 36))
-    (set font (love.graphics.newFont 8 :mono))
+    (set font (love.graphics.newFont 10 :mono))
     (font:setFilter :nearest)
     (set sdown (love.math.newTransform 0 0 0 smaller smaller))
     (set frame image)

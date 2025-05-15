@@ -2,7 +2,7 @@
 (local Game {}) (set Game.__index Game)
 
 (fn Game.new [! keys rebind!] 
-  (let [units     (Vec:new 266 200)
+  (let [units     (Vec:new 320 240)
         gradient  (love.image.newImageData 1 2)
         ctrl      (love.graphics.newImage :img/ctrl.png)
         map       (love.graphics.newImage :img/map.png)
@@ -12,18 +12,18 @@
         cx        (/ (- units.x (* (ctrl:getWidth) sx)) 2)
         cy        (* (- units.y (* (ctrl:getHeight) sy)) 2)
         c         (Vec:new cx cy)
-        lb        {:x 75    :y 34   :a :left}
-        l         {:x 75    :y 58   :a :left}
-        u         {:x 75    :y 78   :a :left}
-        r         {:x 75    :y 98   :a :left}
-        d         {:x 75    :y 118  :a :left}
-        rb        {:x -85   :y 34   :a :right}
-        a         {:x -85   :y 58   :a :right}
-        x         {:x -85   :y 78   :a :right}
-        y         {:x -85   :y 98   :a :right}    
-        b         {:x -85   :y 118  :a :right}
-        start     {:x -148  :y 155  :a :right}
-        select    {:x 138   :y 155  :a :left}
+        lb        {:x 91      :y 44           :a :left}
+        l         {:x lb.x    :y (+ lb.y 27)  :a :left}
+        u         {:x lb.x    :y (+ l.y 21)   :a :left}
+        r         {:x lb.x    :y (+ u.y 21)   :a :left}
+        d         {:x lb.x    :y (+ r.y 21)   :a :left}
+        rb        {:x -104    :y lb.y         :a :right}
+        a         {:x rb.x    :y (+ rb.y 27)  :a :right}
+        x         {:x rb.x    :y (+ a.y 21)   :a :right}
+        y         {:x rb.x    :y (+ x.y 21)   :a :right}    
+        b         {:x rb.x    :y (+ y.y 21)   :a :right}
+        start     {:x rb.x    :y (+ d.y 51)   :a :right}
+        select    {:x 91      :y start.y      :a :left}
         maps      { : lb : rb : l : u : r : d : start : select 
                     : x : y : a : b}
         g {: units : ctrl : map : s : c : maps : rebind!}]
@@ -32,7 +32,7 @@
     (set g.grad (love.graphics.newImage gradient))
     (each [name hid (pairs keys)] 
       (set (. g.maps name :hid) hid))
-    (each [name m (pairs maps)] (set m.w 42) (set m.h 12))
+    (each [name m (pairs maps)] (set m.w 48) (set m.h 13))
     (setmetatable g !)))
 
 (fn Game.draw [! scale]
@@ -56,9 +56,8 @@
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.printf (.. 
     "welcome to our spring lisp game jam submission\n"
-    "to remap your controller, click on a box below,"
-    "then press any key or mouse button"
-    "-- will not rebind anything already bound")
+    "to remap your controller, click on a box below and\n"
+    "press any not-already-bound key or mouse button")
     0 0 !.units.x :center))
 
 (fn Game.mousemoved [! x y]

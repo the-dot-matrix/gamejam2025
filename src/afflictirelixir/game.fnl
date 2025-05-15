@@ -16,7 +16,7 @@
 (fn Game.new [!]
   (local ! (setmetatable {} !))
   (set !.area (Vec:new 256 192))
-  (set !.border (Vec:new 5 4))
+  (set !.border (Vec:new 3 4))
   (set !.units (+ !.area (* !.border 2)))
   (set !.bounds (Spawner:new Line))
   (set !.board (Spawner:new Line))
@@ -69,8 +69,11 @@
   (love.graphics.translate (/ -16 4) (/ -16 2))
   (!.board:draw scale)
   ;; entity draws
+  (love.graphics.push)
+  (love.graphics.scale scale scale)
   (each [_ v (ipairs !.entities)]
     (v:draw))
+  (love.graphics.pop)
   ;; end of entity draws
   (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ -16 4))

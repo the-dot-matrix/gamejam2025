@@ -11,6 +11,8 @@
     (set (!.msg !.trace) (values "no error reported" ""))
     (when error? (set !.msg error?))
     (when trace? (set !.trace trace?))
+    (print !.msg)
+    (print !.trace)
     (setmetatable g !)))
 
 (fn Game.draw [! scale]

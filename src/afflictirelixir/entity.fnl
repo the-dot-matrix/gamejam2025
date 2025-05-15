@@ -3,11 +3,15 @@
 (local Vec (require :src.vec))
 
 (local (left up right down) (values 6 1 16 12))
+;; 0 9 0 10
+
+(fn tileB [tx ty]
+ (Vec:new (values (* tx 16) ( * ty 16))))
 
 ;;CURRENT ENTITY NEW VALUES ARE BAD USED ONLY FOR CURRENT GAMEBOARD
 (fn Entity.new [! ?name ?X ?Y]
   (let [(x y)   (values (or ?X 0) (or ?Y 0)) ;; used for 16x16 tile system
-        pos     (Vec:new (values (* (+ x left) 16) ( * (+ y up) 16)))
+        pos     (tileB (+ left x) (+ up y))
         r       0
         scale   (Vec:new 1 1)
         origin  (Vec:new 0 0)
@@ -36,8 +40,16 @@
 (fn Entity.update [! dt]
   (set !.frame (% (+ !.frame (* dt 12)) 12))
   (when (not= (math.floor !.frame) (math.floor !.pframe))
-  (local anim (. !.anim !.state))
-  (!.sprite:update anim))
+    (local anim (. !.anim !.state))
+    (!.sprite:update dt anim)
+    (when (= (math.floor !.frame) 0)
+      (if (= !.pos.x (* (- right 1) 16))
+        (set !.scale.x -1))
+      (if (= !.pos.x (* left 16))
+        (set !.scale.x 1))
+      (set !.pos (+ !.pos (tileB !.scale.x 0)))
+      )
+      )
   (set !.pframe !.frame))
 
 (fn Entity.draw [!]

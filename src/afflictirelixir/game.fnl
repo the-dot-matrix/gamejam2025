@@ -34,11 +34,11 @@
   (spawnBox !.trans 3.5 6.5 5.5 9.5)
   (spawnBox !.trans 0.5 6.5 2.5 9.5)
   ; x{00 9} y{00 10}
-  (set !.heart    (Entity:new :heart    0 0))
-  (set !.brain    (Entity:new :brain    9 0))
-  (set !.spleen   (Entity:new :spleen   0 10))
-  (set !.galblad  (Entity:new :galblad  9 10))
-  (set !.wizard   (Entity:new :wizard   4 5))
+  (set !.heart    (Entity:new :heart    0 0   :enemy))
+  (set !.brain    (Entity:new :brain    9 0   :enemy))
+  (set !.spleen   (Entity:new :spleen   0 10  :enemy))
+  (set !.galblad  (Entity:new :galblad  9 10  :enemy))
+  (set !.wizard   (Entity:new :wizard   4 5   :chara))
   (fn enemyAnimSet [entity]
     (entity:genAnim {:static [1 6] :walk [7 12]}))
   (enemyAnimSet !.heart)

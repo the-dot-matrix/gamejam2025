@@ -9,16 +9,17 @@
  (Vec:new (values (* tx 16) ( * ty 16))))
 
 ;;CURRENT ENTITY NEW VALUES ARE BAD USED ONLY FOR CURRENT GAMEBOARD
-(fn Entity.new [! ?name ?X ?Y]
-  (let [(x y)   (values (or ?X 0) (or ?Y 0)) ;; used for 16x16 tile system
-        pos     (tileB (+ left x) (+ up y))
+(fn Entity.new [! ?name  ?x ?y ?eType]
+  (let [(X Y)   (values (or ?x 0) (or ?y 0))
+        pos     (tileB (+ left X) (+ up Y))
         sprite  (Sprite:new ?name)
         anim    {}
         state   :static
         pframe  0
         frame   0
-        direc   1]
-    (setmetatable {: pos : sprite 
+        direc   1
+        eType   (or ?eType :nil)]
+    (setmetatable {: pos : sprite : eType
       : anim : state : pframe : frame : direc} !)))
 
 
@@ -41,13 +42,14 @@
     (local anim (. !.anim !.state))
     (!.sprite:update dt anim)
     (when (= (math.floor !.frame) 0)
-      (if (= !.pos.x (* (- right 1) 16))
-        (set !.direc -1))
-      (if (= !.pos.x (* left 16))
-        (set !.direc 1))
-      (set !.pos (+ !.pos (tileB !.direc 0)))
+      (when (= !.eType :enemy )
+        (if (= !.pos.x (* (- right 1) 16))
+          (set !.direc -1))
+        (if (= !.pos.x (* left 16))
+          (set !.direc 1))
+        (set !.pos (+ !.pos (tileB !.direc 0))))
       )
-      )
+   )
   (set !.pframe !.frame))
 
 (fn Entity.draw [!]

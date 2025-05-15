@@ -49,7 +49,7 @@
     (local (tx ty) (!.texttrans:inverseTransformPoint x y))
     (when (and  (> tx g.x) (< tx (+ g.x g.w))
                 (> ty g.y) (< ty (+ g.y g.h)))
-      (set game (!:update name))))
+      (set game name)))
   game)
 
 CART

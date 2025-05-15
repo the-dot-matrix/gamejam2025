@@ -35,8 +35,6 @@
     (each [name m (pairs maps)] (set m.w 42) (set m.h 12))
     (setmetatable g !)))
 
-(fn Game.update [! dt])
-
 (fn Game.draw [! scale]
   (love.graphics.draw !.grad 0 0 0 !.units.x (/ !.units.y 2))
   (love.graphics.setBlendMode :screen :premultiplied)
@@ -60,7 +58,7 @@
     "welcome to our spring lisp game jam submission\n"
     "to remap your controller, click on a box below,"
     "then press any key or mouse button"
-    "-- will not-rebind anything already bound")
+    "-- will not rebind anything already bound")
     0 0 !.units.x :center))
 
 (fn Game.mousemoved [! x y]
@@ -73,7 +71,7 @@
 
 (fn Game.mousepressed [! x y click]
   (if !.rebinding? 
-    (!:rebind click)
+    (do (print "mouse") (!:rebind click))
     (each [name m (pairs !.maps)]
       (let [mx m.x
             mx (if (= m.a :right) (- (+ mx !.units.x) m.w) mx)]
@@ -87,6 +85,7 @@
 (fn Game.keypressed [! k] (when !.rebinding? (!:rebind k)))
 
 (fn Game.rebind [! binding]
+  (print !.rebinding? binding)
   (var mt? true)
   (each [name m (pairs !.maps)]
       (set (m.selected m.hovering) (values false false))

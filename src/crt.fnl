@@ -19,7 +19,7 @@
     (screen:setFilter :nearest :nearest 0)
     (setmetatable s !)))
 
-(fn CRT.update [! dt] (!.game:update dt))
+(fn CRT.update [! dt] (when !.game.update (!.game:update dt)))
 
 (fn CRT.draw [!]
   (love.graphics.push)

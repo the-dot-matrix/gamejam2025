@@ -4,6 +4,7 @@
 (local Entity (require :src.afflictirelixir.entity))
 (local Game {}) (set Game.__index Game)
 
+
 (fn tIndex [a ...]
   (local tileLength 16)
   (if a (unpack [(* a 16) (tIndex ...)]) nil))
@@ -22,6 +23,7 @@
   (set !.board (Spawner:new Line))
   (set !.cards (Spawner:new Line))
   (set !.trans (Spawner:new Line))
+  (set !.entities [])
   (!.bounds:spawn 0 0 !.area.x 0)
   (!.bounds:spawn !.area.x 0 !.area.x !.area.y)
   (!.bounds:spawn !.area.x !.area.y 0 !.area.y)
@@ -39,16 +41,18 @@
   (set !.spleen   (Entity:new :spleen   0 10  :enemy))
   (set !.galblad  (Entity:new :galblad  9 10  :enemy))
   (set !.wizard   (Entity:new :wizard   4 5   :chara))
-  (fn enemyAnimSet [entity]
-    (entity:genAnim {:static [1 6] :walk [7 12]}))
-  (enemyAnimSet !.heart)
-  (enemyAnimSet !.brain)
-  (enemyAnimSet !.spleen)
-  (enemyAnimSet !.galblad)
-  (!.heart:setState :walk)
-  (!.brain:setState :walk)
-  (!.spleen:setState :walk)
-  (!.galblad:setState :walk) ;; swap between :walk and :static
+  (set !.entities [!.heart !.brain !.spleen !.galblad !.wizard])
+  (fn setAnimEnemy [entities]
+    (local enemies (icollect [_ v (ipairs entities)] (if (= v.eType :enemy) v)))
+    (each [_ v (ipairs enemies)]
+      (v:genAnim {:static [1 6] :walk [7 12]})))
+  (setAnimEnemy !.entities)
+  ;;setStateEnemy useful for future in game.update potentially
+  (fn setStateEnemy [entities state]
+    (local enemies (icollect [_ v (ipairs entities)] (if (= v.eType :enemy) v)))
+    (each [_ v (ipairs enemies)]
+      (v:setState state)))
+  (setStateEnemy !.entities :walk) ;; swap between :walk and :static
   (set !.bg       (Entity:new))
   !)
 
@@ -84,5 +88,9 @@
   (love.graphics.pop)
   (love.graphics.pop)
   (love.graphics.pop))
+
+(fn Game.keypressed [! key])
+
+(fn Game.keyreleased [! key])
 
 Game

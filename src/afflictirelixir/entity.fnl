@@ -13,8 +13,8 @@
   (let [(X Y)   (values (or ?x 0) (or ?y 0))
         pos     (tileB (+ left X) (+ up Y))
         sprite  (Sprite:new ?name)
-        anim    {}
-        state   :static
+        anim    {:default {:f1 1 :f2 (length sprite.quads)}}
+        state   :default
         pframe  0
         frame   0
         direc   1
@@ -47,10 +47,14 @@
           (set !.direc -1))
         (if (= !.pos.x (* left 16))
           (set !.direc 1))
-        (set !.pos (+ !.pos (tileB !.direc 0))))
-      )
-   )
+        (set !.pos (+ !.pos (tileB !.direc 0))))))
   (set !.pframe !.frame))
+
+(fn Entity.keypressed [! key]
+  (print "press" key))
+
+(fn Entity.keyreleased [! key]
+  (print "release" key))
 
 (fn Entity.draw [!]
   (let [(x y)   (values !.pos.x !.pos.y)

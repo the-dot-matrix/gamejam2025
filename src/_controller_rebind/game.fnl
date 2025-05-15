@@ -71,7 +71,7 @@
 
 (fn Game.mousepressed [! x y click]
   (if !.rebinding? 
-    (do (print "mouse") (!:rebind click))
+    (!:rebind click)
     (each [name m (pairs !.maps)]
       (let [mx m.x
             mx (if (= m.a :right) (- (+ mx !.units.x) m.w) mx)]

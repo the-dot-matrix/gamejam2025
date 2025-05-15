@@ -42,7 +42,7 @@
     (set frame image)
     (set cart (CART:new smaller))
     (set ctrl (CTRL:new))
-    (boot :_controller_rebind)))
+    (safe #(boot :_controller_rebind))))
 
 (fn love.update [dt] (when crt (safe #(crt:update dt))))
 

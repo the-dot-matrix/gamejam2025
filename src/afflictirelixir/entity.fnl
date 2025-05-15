@@ -56,7 +56,7 @@
         (if (= !.pos.x (* left 16))
           (set !.direc 1))
         !.move)
-      :player
+      :chara
       nil))
   (set !.pframe !.frame))
 
@@ -70,21 +70,24 @@
   (!.sprite:draw  x y r sX sY oX oY anim)))
 
 (fn Entity.keypressed [! key]
-  (var keyUsed? false)
-  (each [k _ (pairs pressed)]
-    (if (not keyUsed?) (set keyUsed? true)))
-  (when keyUsed? 
-    ; (set pressed.key.press? true)
-    ; (if (not pressed.key.enact?)
-    ;   (print "pressed" key)
-    ;   (set pressed.key.enact? true))
-    (print "pressed" key)))
+  (when (= !.eType :chara)
+    (var keyUsed? false)
+    (each [k _ (pairs pressed)]
+      (if (= k key) (set keyUsed? true)))
+    (when keyUsed? 
+      ; (set pressed.key.press? true)
+      ; (if (not pressed.key.enact?)
+      ;   (print "pressed" key)
+      ;   (set pressed.key.enact? true))
+      (print "pressed" key))))
 
 (fn Entity.keyreleased [! key]
-  (var keyUsed? false)
-  (each [k _ (pairs pressed)] 
-    (if (not keyUsed?) (set keyUsed? true)))
-  (when keyUsed?
-    (print "released+++++" key)))
+  (when (= !.eType :chara)
+    (var keyUsed? false)
+    (each [k _ (pairs pressed)] 
+      (if (= k key) (set keyUsed? true)))
+    (when keyUsed?
+      (print "released+++++" key)))
+  )
 
 Entity

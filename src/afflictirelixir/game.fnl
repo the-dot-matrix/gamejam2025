@@ -56,9 +56,7 @@
   !)
 
 (fn Game.update [! dt]
-  (fn grabETypeEntity [entities eType]
-    (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))
-  (each [_ v (ipairs (grabETypeEntity !.entities :enemy))]
+  (each [_ v (ipairs !.entities)]
     (v:update dt)))
 
 (fn Game.draw [! scale]

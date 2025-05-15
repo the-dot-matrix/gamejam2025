@@ -1,6 +1,6 @@
 (local CART {}) (set CART.__index CART)
 
-(fn CART.new [! scale]
+(fn CART.new [!]
   (local ! (setmetatable {} !))
   (let [files   (love.filesystem.getDirectoryItems :src)
         (x w h)   (values 165 380 48)]
@@ -10,9 +10,8 @@
       (love.filesystem.getInfo (.. :src/ name) :directory) 
       (tset !.games name {: x :y (* (+ g 1) h -1) : w : h})
       (set g (+ g 1))))
-    (set !.texttrans (love.math.newTransform 0 0 (/ math.pi 2)
-      scale scale))
-    (set !.scale !.scale)
+    (set !.texttrans (love.math.newTransform 
+      0 0 (/ math.pi 2)))
     !))
 
 (fn CART.update [! name]

@@ -10,7 +10,7 @@
         render  (CRT:new game)
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)]
-    (set sup larger)
+    (set sup (love.math.newTransform 0 0 0 larger larger))
     (set crt render)
     (ctrl:register game)))
 
@@ -23,11 +23,11 @@
         smaller (math.min fitto.x fitto.y)
         win     (* res smaller)]
     (set FONT (love.graphics.newFont 42))
-    (set font (love.graphics.newFont 9 :mono))
+    (set font (love.graphics.newFont 8 :mono))
     (font:setFilter :nearest)
-    (set sdown smaller)
+    (set sdown (love.math.newTransform 0 0 0 smaller smaller))
     (set frame image)
-    (set cart (CART:new sdown))
+    (set cart (CART:new smaller))
     (set ctrl (CTRL:new))
     (boot (cart:update :_controller))))
 
@@ -35,18 +35,18 @@
 
 (fn love.draw []
   (love.graphics.push)
-  (love.graphics.scale sdown sdown)
+  (love.graphics.applyTransform sdown)
   (love.graphics.push)
   (love.graphics.translate 900 50)
-  (love.graphics.scale sup sup)
+  (love.graphics.applyTransform sup)
   (love.graphics.setFont font)  
   (when crt (crt:draw))
   (love.graphics.pop)
   (love.graphics.setFont FONT)
   (love.graphics.draw frame)
+  (cart:draw)
   (ctrl:draw)
-  (love.graphics.pop)
-  (cart:draw))
+  (love.graphics.pop))
 
 (fn love.keypressed [key ...] 
   (when (= key :escape) (love.event.push :quit))
@@ -55,13 +55,15 @@
 (fn love.keyreleased [key ...] 
   (ctrl:keyreleased key ...))
 
-(fn love.mousemoved [...] 
-  (cart:mousemoved ...) 
-  (ctrl:mousemoved ...))
+(fn love.mousemoved [x y ...]
+  (local (tx ty) (sdown:inverseTransformPoint x y))
+  (cart:mousemoved tx ty ...) 
+  (ctrl:mousemoved tx ty ...))
 
-(fn love.mousepressed [...] 
-  (local Game (cart:mousepressed ...))
+(fn love.mousepressed [x y ...] 
+  (local (tx ty) (sdown:inverseTransformPoint x y))
+  (local Game (cart:mousepressed tx ty ...))
   (when Game (boot Game))
-  (ctrl:mousepressed ...))
+  (ctrl:mousepressed tx ty ...))
 
 (fn love.mousereleased [...] (ctrl:mousereleased ...))

@@ -5,7 +5,7 @@
   (let [offset (Vec:new 25 1075)
         mapO {:u :w       :r :d     :d :s       :l :a 
               :x :lshift  :y :space :a :return  :b :rshift
-              :lb 1 :rb 2 :start :backspace :select "`"}
+              :lb 1 :rb 2 :start :backspace :select :tab}
         o    #(pairs mapO) 
         mapI (accumulate [m {} k v (o)] (do (tset m v k) m))
         f   #(love.graphics.newImage (.. :img/ctrl/ $1 :.png))
@@ -22,14 +22,14 @@
 
 (fn CTRL.draw [!]
   (love.graphics.push)
-  (love.graphics.setColor 0.4 0.4 0.4 1)
+  (love.graphics.setColor 0.33 0.33 0.33 1)
   (love.graphics.setBlendMode :screen :premultiplied)
   (love.graphics.draw !.overlay !.offset.x !.offset.y)
-  (love.graphics.setColor 0.8 0.8 0.8 1)
-  (each [m pressed? (pairs !.presses)] (when pressed? 
-    
+  (love.graphics.setColor 0.66 0.66 0.66 1)
+  (each [m pressed? (pairs !.presses)] (when pressed?
     (love.graphics.draw (. !.hi m) !.offset.x !.offset.y)))
   (love.graphics.setBlendMode :alpha)
+  (love.graphics.setColor 1 1 1 1)
   (love.graphics.pop))
 
 (fn CTRL.register [! handler?]

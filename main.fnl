@@ -5,27 +5,26 @@
 (var (bad cart crt ctrl) (values))
 (var (FONT font game frame sdown sup) (values))
 
-(fn safe [f ...] 
-  (let [fixf #(love.graphics.setCanvas)
-        (_ result) (xpcall f #(do (fixf) (bad $...)) ...)]
-    result))
-
 (fn boot [name error? trace?]
-  (local Game (safe #(cart:update name)))
+  (local Game (cart:update name))
   (local cgame #(Game:new ctrl.mapO #(ctrl.update ctrl $1 $2)))
   (local egame #(Game:new error? trace?))
   (set game (case name
-    :_controller_rebind (safe #(cgame))
-    :_bad_screen_of_sad (safe #(egame))
-    _ (safe #(Game:new))))
+    :_controller_rebind (cgame)
+    :_bad_screen_of_sad (egame)
+    _ (Game:new)))
   (let [view    (Vec:new 1600 1200)
-        render  (safe #(CRT:new game))
+        render  (CRT:new game)
         fitto   (/ view render.res)
         larger  (math.min fitto.x fitto.y)]
     (set sup (love.math.newTransform 900 50 0 larger larger))
     (set crt render)
-    (safe #(ctrl:register game sup))))
-(set bad #(boot :_bad_screen_of_sad $... (fennel.traceback)))
+    (ctrl:register game sup)))
+(fn safe [f ...] 
+  (let [bad #(boot :_bad_screen_of_sad $... (fennel.traceback))
+        fixf #(love.graphics.setCanvas)
+        (safe? result) (xpcall f #(do (fixf) (bad $...)) ...)]
+    result))
 
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)

@@ -14,11 +14,11 @@
       0 0 (/ math.pi 2)))
     !))
 
-(fn CART.update [! name]
+(fn CART.update [! cart]
   (each [name g (pairs !.games)] 
     (set (g.selected g.hovering) (values false false)))
-  (set (. !.games name :selected) true)
-  (require (.. :src. name :.game)))
+  (set (. !.games cart :selected) true)
+  (require (.. :src. cart :.game)))
 
 (fn CART.draw [!]
   (love.graphics.push)

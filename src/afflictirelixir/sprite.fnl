@@ -1,4 +1,5 @@
 (local Sprite {}) (set Sprite.__index Sprite)
+(local Vec (require :src.Vec))
 (local game :afflictirelixir/)
 (local missingTexture (.. :src/ game :img/nil.png))
 (local (width height padding) (values 16 16 1))
@@ -34,7 +35,10 @@
                               (+ 1 (* j (+ height padding)))
                               width height w h))) nil)
         frame         0
-        sprite        {: image : quads : tileCount : frame}]
+        r             0
+        scale         (Vec:new 1 1)
+        origin        (Vec:new 0 0)
+        sprite        {: image : quads : tileCount : frame : scale : origin}]
     (if (not goodPadding?) (error (.. "poorly padded " name)))
     (setmetatable sprite !)))
 
@@ -51,10 +55,10 @@
   (let [x       (or ?X 0)
         y       (or ?Y 0)
         r       (or ?R 0)
-        sX      (or ?scaleX 1)
-        sY      (or ?scaleY 1)
-        oX      (or ?originX 0)
-        oY      (or ?originY 0)
+        sX      (or ?scaleX !.scale.x)
+        sY      (or ?scaleY !.scale.y)
+        oX      (or ?originX !.origin.x)
+        oY      (or ?originY !.origin.y)
         anim   (if ?anim (fcollect [i ?anim.f1 ?anim.f2 1] (. !.quads i)) !.quads)]
     (love.graphics.draw !.image 
       (. anim (+ (math.floor !.frame) 1))

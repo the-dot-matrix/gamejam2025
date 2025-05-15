@@ -12,16 +12,14 @@
 (fn Entity.new [! ?name ?X ?Y]
   (let [(x y)   (values (or ?X 0) (or ?Y 0)) ;; used for 16x16 tile system
         pos     (tileB (+ left x) (+ up y))
-        r       0
-        scale   (Vec:new 1 1)
-        origin  (Vec:new 0 0)
         sprite  (Sprite:new ?name)
         anim    {}
         state   :static
         pframe  0
-        frame   0]
-    (setmetatable {: pos : r : scale : origin : sprite 
-      : anim : state : pframe : frame} !)))
+        frame   0
+        direc   1]
+    (setmetatable {: pos : sprite 
+      : anim : state : pframe : frame : direc} !)))
 
 
 (fn Entity.setAnim [! name f1 f2]
@@ -44,19 +42,19 @@
     (!.sprite:update dt anim)
     (when (= (math.floor !.frame) 0)
       (if (= !.pos.x (* (- right 1) 16))
-        (set !.scale.x -1))
+        (set !.direc -1))
       (if (= !.pos.x (* left 16))
-        (set !.scale.x 1))
-      (set !.pos (+ !.pos (tileB !.scale.x 0)))
+        (set !.direc 1))
+      (set !.pos (+ !.pos (tileB !.direc 0)))
       )
       )
   (set !.pframe !.frame))
 
 (fn Entity.draw [!]
   (let [(x y)   (values !.pos.x !.pos.y)
-        r       !.r
-        (sX sY) (values !.scale.x !.scale.y)
-        (oX oY) (values !.origin.x !.origin.y)
+        r       0
+        (sX sY) (values 1 1)
+        (oX oY) (values 0 0)
         sprite  !.sprite
         anim    (. !.anim !.state)]
   (!.sprite:draw  x y r sX sY oX oY anim)))

@@ -15,7 +15,7 @@
 
 (fn Game.new [!]
   (local ! (setmetatable {} !))
-  (set !.area (Vec:new 256 200))
+  (set !.area (Vec:new 256 192)) ; 16 12
   (set !.border (Vec:new 5 0))
   (set !.units (+ !.area (* !.border 2)))
   (set !.bounds (Spawner:new Line))
@@ -26,18 +26,19 @@
   (!.bounds:spawn !.area.x 0 !.area.x !.area.y)
   (!.bounds:spawn !.area.x !.area.y 0 !.area.y)
   (!.bounds:spawn 0 !.area.y 0 0)
-  (spawnBox !.board 6 1 16 12)
+  (local (left up right down) (values 6 1 16 12))
+  (spawnBox !.board left up right down) ; 0 0 9 10 ; x1 y1 x2 y2
   (spawnBox !.cards 0 1 5 4)
   (spawnBox !.trans 2 4 4 7)
   (spawnBox !.trans 2 9 4 12)
   (spawnBox !.trans 3.5 6.5 5.5 9.5)
   (spawnBox !.trans 0.5 6.5 2.5 9.5)
-  (set !.heart  (Entity:new :heart 6 1))
-  (set !.brain    (Entity:new :brain    15 1))
-  (set !.spleen   (Entity:new :spleen   6 11))
-  (set !.galblad  (Entity:new :galblad  15 11))
-  (set !.wizard   (Entity:new :wizard   10 6))
-
+  ; x{00 9} y{00 10}
+  (set !.heart    (Entity:new :heart    0 0))
+  (set !.brain    (Entity:new :brain    9 0))
+  (set !.spleen   (Entity:new :spleen   0 10))
+  (set !.galblad  (Entity:new :galblad  9 10))
+  (set !.wizard   (Entity:new :wizard   4 5))
   (fn enemyAnimSet [entity]
     (entity:genAnim {:static [1 6] :walk [7 12]}))
   (enemyAnimSet !.heart)

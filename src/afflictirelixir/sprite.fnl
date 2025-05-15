@@ -42,9 +42,9 @@
   (fcollect [index f1 f2 1]
     (. !.quads index)))
 
-(fn Sprite.update [! dt ?anim]
+(fn Sprite.update [! dt ?anim] ;; dt is currently redundant
   (local anim (if ?anim (fcollect [i ?anim.f1 ?anim.f2 1] (. !.quads i)) !.quads))
-  (set !.frame (% (+ !.frame (* dt 12)) (length anim))))
+  (set !.frame (% (+ !.frame 1) (length anim))))
 
 (fn Sprite.draw [! ?X ?Y ?R ?scaleX ?scaleY 
                 ?originX ?originY ?anim]

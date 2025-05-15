@@ -31,13 +31,15 @@
   (love.graphics.pop)
   (love.graphics.setCanvas !.screen)
   (love.graphics.clear 0.02 0.02 0.02)
-  (love.graphics.translate !.mid.x !.mid.y)
-  (love.graphics.draw !.native)
+  (love.graphics.draw !.native !.mid.x !.mid.y)
   (love.graphics.push)
-  (love.graphics.setColor 0 1 0 1)
-  (when _G.DEBUG (love.graphics.print (..  
-    "  FPS:" (love.timer.getFPS))))
-  (love.graphics.setColor 1 1 1 1)
+  (when _G.DEBUG 
+    (love.graphics.setColor 0 0 0 0.5)
+    (love.graphics.rectangle :fill 0 !.mid.y 48 12)
+    (love.graphics.setColor 0 1 0 1)
+    (love.graphics.print (..  
+      "  FPS:" (love.timer.getFPS)) 0 !.mid.y)
+    (love.graphics.setColor 1 1 1 1))
   (love.graphics.pop)
   (love.graphics.pop)
   (love.graphics.setCanvas)

@@ -22,9 +22,10 @@
     (ctrl:register game sup)))
 (fn safe [f ...] 
   (let [bad #(boot :_bad_screen_of_sad $... (fennel.traceback))
-        fixf #(love.graphics.setCanvas)
-        (safe? result) (xpcall f #(do (fixf) (bad $...)) ...)]
-    result))
+        fixf  #(love.graphics.setCanvas)
+        safef #(do (fixf) (bad $...))
+        (a b) (if _G.DEBUG (f ...) (xpcall f safef ...))]
+    (if _G.DEBUG a b)))
 
 (fn love.load []
   (let [image   (love.graphics.newImage :img/overlay.png)

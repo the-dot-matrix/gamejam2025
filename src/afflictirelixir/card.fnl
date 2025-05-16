@@ -5,7 +5,7 @@
 (fn Card.new [! humor facedown?]
   (setmetatable {: humor :down? (or facedown? false)} !))
 
-(fn Card.update [! dt])
+(fn Card.update [! down?] (set !.down? down?))
 
 (fn Card.draw [! x y]
   (if !.down? (love.graphics.setColor 0 0 0 1)

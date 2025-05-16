@@ -27,30 +27,37 @@
   (set !.walls (Spawner:new Wall))
   (local (left up right down) (values 6 1 15 11))
   (spawnBox !.walls left up right down)
-  (set !.entities [])
-  (set !.heart    (Entity:new :heart    1 1   :enemy))
-  (set !.brain    (Entity:new :brain    8 1   :enemy))
-  (set !.spleen   (Entity:new :spleen   1 9  :enemy))
-  (set !.galblad  (Entity:new :galblad  8 9  :enemy))
-  (set !.wizard   (Entity:new :wizard   4 5   :chara (!.walls:query :collide?)))
-  (set !.entities [!.heart !.brain !.spleen !.galblad !.wizard])
-  (fn Game.grabETypeEntity [entities eType]
-    (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))
-  (fn setAnimEnemy [entities]
-    (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
-      (v:genAnim {:static [1 6] :walk [7 12]})))
-  (setAnimEnemy !.entities)
-  ;;setStateEnemy useful for future in game.update potentially
-  (fn setStateEnemy [entities state]
-    (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
-      (v:setState state)))
-  (setStateEnemy !.entities :walk) ;; swap between :walk and :static
-  (set !.bg       (Entity:new))
+  (set !.enemies (Spawner:new Entity))
+  (set !.heart    (!.enemies:spawn :heart    1 1   :enemy))
+  (set !.brain    (!.enemies:spawn :brain    8 1   :enemy))
+  (set !.spleen   (!.enemies:spawn :spleen   1 9  :enemy))
+  (set !.galblad  (!.enemies:spawn :galblad  8 9  :enemy))
+  (set !.wizard   (Entity:new :wizard   4 5   :chara 
+                    (!.walls:query :collide?) 
+                    (!.enemies:query :collide?)
+                    #(!.status.update !.status $1)))
+  ; TODO    Entity class is a really weird abstraction
+  ;         why not just enemies and player?
+  ;         keypressed/released only call !.wizard now
+  ;         all those weird type checks in Entity won't be needed
+  ;         once you split the classes up
+  ;
+  ; (fn Game.grabETypeEntity [entities eType]
+  ;   (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))
+  ; (fn setAnimEnemy [entities]
+  ;   (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
+  ;     (v:genAnim {:static [1 6] :walk [7 12]})))
+  ; (setAnimEnemy !.entities)
+  ; ;;setStateEnemy useful for future in game.update potentially
+  ; (fn setStateEnemy [entities state]
+  ;   (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
+  ;     (v:setState state)))
+  ; (setStateEnemy !.entities :walk) ;; swap between :walk and :static
   !)
 
 (fn Game.update [! dt]
-  (each [_ v (ipairs !.entities)]
-    (v:update dt)))
+  (!.enemies:update dt)
+  (!.wizard:update dt))
 
 (fn Game.draw [! scale]
   (love.graphics.clear 0.65 0.65 0.65)
@@ -64,7 +71,8 @@
   (love.graphics.push)
   (love.graphics.scale scale scale)
   (!.walls:draw)
-  (each [_ v (ipairs !.entities)] (v:draw))
+  (!.enemies:draw)
+  (!.wizard:draw)
   (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ 16 8))
   (!.hand:draw)
@@ -77,11 +85,9 @@
 
 (fn Game.keypressed [! key]
   (when (= key :y) (!.hand:update (Humor.random)))
-  (each [_ v (ipairs !.entities)]
-    (v:keypressed key)))
+  (!.wizard:keypressed key))
 
 (fn Game.keyreleased [! key]
-  (each [_ v (ipairs !.entities)]
-    (v:keyreleased key)))
+  (!.wizard:keyreleased key))
 
 Game

@@ -11,7 +11,16 @@
               :src/afflictirelixir/img/cycle.png)} 
     !))
 
-(fn Status.update [! humor])
+(fn Status.update [! enemies]
+  (each [_ enemy (ipairs enemies)]
+    (each [i card (ipairs !.cards)]
+      (when (= card.humor.name (. Humor.byenemy enemy))
+        (local s (% (+ i -1 1) (length !.cards)))
+        (local strong (. !.cards (+ s 1)))
+        (when strong.down? (card:update false))
+        (local w (% (+ i -1 (- (length !.cards) 1)) (length !.cards)))
+        (local weak (. !.cards (+ w 1)))
+        ((. weak :update) weak true)))))
 
 (fn Status.draw [!]
   (each [i c (ipairs !.cards)] (case i

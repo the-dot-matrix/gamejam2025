@@ -10,7 +10,7 @@
  (Vec:new (values (* tx 16) ( * ty 16))))
 
 ;;CURRENT ENTITY NEW VALUES ARE BAD USED ONLY FOR CURRENT GAMEBOARD
-(fn Entity.new [! ?name  ?x ?y ?eType ?query]
+(fn Entity.new [! ?name  ?x ?y ?eType collides encounters statusupdate]
   (let [(X Y)   (values (or ?x 0) (or ?y 0))
         pos     (tileB (+ left X) (+ up Y))
         sprite  (Sprite:new ?name)
@@ -20,9 +20,10 @@
         frame   0
         direc   (Vec:new 1 0)
         eType   (or ?eType :nil)
-        collides (or ?query #(error "entity given invalid query"))]
-    (setmetatable {: pos : sprite : eType
-      : anim : state : pframe : frame : direc : collides} !)))
+        name    ?name]
+    (setmetatable {: name : pos : sprite : eType
+      : anim : state : pframe : frame : direc 
+      : collides : encounters : statusupdate} !)))
 
 (fn Entity.setAnim [! name f1 f2]
   (tset !.anim name { : f1 : f2}))
@@ -58,8 +59,10 @@
         anim    (. !.anim !.state)]
   (!.sprite:draw  x y r sX sY oX oY anim)))
 
-(local keys [:u :d :l :r])
+(fn Entity.collide? [! x y] 
+  (when (and (= !.pos.x x) (= !.pos.y y)) !.name))
 
+(local keys [:u :d :l :r])
 (fn Entity.keypressed [! key]
   (when (= !.eType :chara)
     (var keyUsed? false)
@@ -74,8 +77,10 @@
           :d  (set !.pos (+ !.pos (tileB 0 1)))
           :r  (set !.pos (+ !.pos (tileB 1 0))))
         (when (> (length (!.collides !.pos.x !.pos.y)) 0)
-          (set !.pos oldpos))))))
-
+          (set !.pos oldpos))
+        (local encounters (!.encounters !.pos.x !.pos.y))
+        (when (> (length encounters) 0)
+          (!.statusupdate encounters))))))
 (fn Entity.keyreleased [! key]
   (when (= !.eType :chara)
     (var keyUsed? false)

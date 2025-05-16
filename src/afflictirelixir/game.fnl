@@ -2,6 +2,8 @@
 (local Line (require :src.line))
 (local Spawner (require :src.spawner))
 (local Entity (require :src.afflictirelixir.entity))
+(local Hand (require :src.afflictirelixir.hand))
+(local Humor (require :src.afflictirelixir.humor))
 (local Game {}) (set Game.__index Game)
 
 (fn tIndex [a ...]
@@ -18,18 +20,13 @@
   (set !.area (Vec:new 256 192))
   (set !.border (Vec:new 3 4))
   (set !.units (+ !.area (* !.border 2)))
-  (set !.bounds (Spawner:new Line))
+  (set !.hand (Hand:new 0 1))
+  ;; TODO cleanup below
   (set !.board (Spawner:new Line))
-  (set !.cards (Spawner:new Line))
   (set !.trans (Spawner:new Line))
   (set !.entities [])
-  (!.bounds:spawn 0 0 !.area.x 0)
-  (!.bounds:spawn !.area.x 0 !.area.x !.area.y)
-  (!.bounds:spawn !.area.x !.area.y 0 !.area.y)
-  (!.bounds:spawn 0 !.area.y 0 0)
   (local (left up right down) (values 6 1 16 12))
   (spawnBox !.board left up right down) ; 0 0 9 10 ; x1 y1 x2 y2
-  (spawnBox !.cards 0 1 5 4)
   (spawnBox !.trans 2 4 4 7)
   (spawnBox !.trans 2 9 4 12)
   (spawnBox !.trans 3.5 6.5 5.5 9.5)
@@ -66,19 +63,18 @@
     (* scale !.border.x)
     (* scale !.border.y))
   (love.graphics.push)
-  (love.graphics.translate (/ -16 4) (/ -16 2))
+  (love.graphics.translate (/ -16 4) (/ -16 4))
   (!.board:draw scale)
   ;; entity draws
   (love.graphics.push)
   (love.graphics.scale scale scale)
   (each [_ v (ipairs !.entities)]
     (v:draw))
+  (love.graphics.translate (/ 16 2) (/ -16 4))
+  (!.hand:draw)
   (love.graphics.pop)
   ;; end of entity draws
-  (love.graphics.push)
-  (love.graphics.translate (/ 16 2) (/ -16 4))
-  (!.cards:draw scale)
-  (love.graphics.pop)
+  
   (love.graphics.push)
   (love.graphics.translate 0 (/ 16 4))
   (!.trans:draw scale)
@@ -87,6 +83,7 @@
   (love.graphics.pop))
 
 (fn Game.keypressed [! key]
+  (when (= key :y) (!.hand:update (Humor.random)))
   (each [_ v (ipairs !.entities)]
     (v:keypressed key)))
 

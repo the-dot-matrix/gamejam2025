@@ -3,6 +3,7 @@
 (local Spawner (require :src.spawner))
 (local Entity (require :src.afflictirelixir.entity))
 (local Hand (require :src.afflictirelixir.hand))
+(local Status (require :src.afflictirelixir.status))
 (local Humor (require :src.afflictirelixir.humor))
 (local Game {}) (set Game.__index Game)
 
@@ -21,17 +22,13 @@
   (set !.border (Vec:new 3 4))
   (set !.units (+ !.area (* !.border 2)))
   (set !.hand (Hand:new 0 1))
+  (set !.status (Status:new 2 7))
   ;; TODO cleanup below
   (set !.board (Spawner:new Line))
-  (set !.trans (Spawner:new Line))
-  (set !.entities [])
   (local (left up right down) (values 6 1 16 12))
   (spawnBox !.board left up right down) ; 0 0 9 10 ; x1 y1 x2 y2
-  (spawnBox !.trans 2 4 4 7)
-  (spawnBox !.trans 2 9 4 12)
-  (spawnBox !.trans 3.5 6.5 5.5 9.5)
-  (spawnBox !.trans 0.5 6.5 2.5 9.5)
   ; x{00 9} y{00 10}
+  (set !.entities [])
   (set !.heart    (Entity:new :heart    0 0   :enemy))
   (set !.brain    (Entity:new :brain    9 0   :enemy))
   (set !.spleen   (Entity:new :spleen   0 10  :enemy))
@@ -70,15 +67,14 @@
   (love.graphics.scale scale scale)
   (each [_ v (ipairs !.entities)]
     (v:draw))
+  (love.graphics.push)
   (love.graphics.translate (/ 16 2) (/ -16 4))
   (!.hand:draw)
   (love.graphics.pop)
-  ;; end of entity draws
-  
-  (love.graphics.push)
-  (love.graphics.translate 0 (/ 16 4))
-  (!.trans:draw scale)
+  (love.graphics.translate 0 (* -16 0.375))
+  (!.status:draw)
   (love.graphics.pop)
+  ;; end of entity draws
   (love.graphics.pop)
   (love.graphics.pop))
 

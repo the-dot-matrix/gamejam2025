@@ -35,7 +35,7 @@
 (fn CRT.draw [!]
   (love.graphics.push)
   (love.graphics.origin)
-  (love.graphics.setCanvas !.console)
+  (love.graphics.setCanvas {1 !.console :stencil true})
   (love.graphics.clear 0.04 0.04 0.04)
   (love.graphics.push)
   (!.game:draw !.u2p)

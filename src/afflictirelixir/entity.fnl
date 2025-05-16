@@ -10,7 +10,7 @@
  (Vec:new (values (* tx 16) ( * ty 16))))
 
 ;;CURRENT ENTITY NEW VALUES ARE BAD USED ONLY FOR CURRENT GAMEBOARD
-(fn Entity.new [! ?name  ?x ?y ?eType]
+(fn Entity.new [! ?name  ?x ?y ?eType ?query]
   (let [(X Y)   (values (or ?x 0) (or ?y 0))
         pos     (tileB (+ left X) (+ up Y))
         sprite  (Sprite:new ?name)
@@ -19,9 +19,10 @@
         pframe  0
         frame   0
         direc   (Vec:new 1 0)
-        eType   (or ?eType :nil)]
+        eType   (or ?eType :nil)
+        collides (or ?query #(error "entity given invalid query"))]
     (setmetatable {: pos : sprite : eType
-      : anim : state : pframe : frame : direc} !)))
+      : anim : state : pframe : frame : direc : collides} !)))
 
 (fn Entity.setAnim [! name f1 f2]
   (tset !.anim name { : f1 : f2}))
@@ -66,12 +67,14 @@
       (if (= v key) (set keyUsed? true)))
     (when keyUsed?
       (when (= !.eType :chara)
+        (local oldpos (Vec:new !.pos.x !.pos.y))
         (case key 
           :u  (set !.pos (+ !.pos (tileB 0 -1))) 
           :l  (set !.pos (+ !.pos (tileB -1 0)))
           :d  (set !.pos (+ !.pos (tileB 0 1)))
-          :r  (set !.pos (+ !.pos (tileB 1 0)))))
-      )))
+          :r  (set !.pos (+ !.pos (tileB 1 0))))
+        (when (> (length (!.collides !.pos.x !.pos.y)) 0)
+          (set !.pos oldpos))))))
 
 (fn Entity.keyreleased [! key]
   (when (= !.eType :chara)

@@ -10,4 +10,6 @@
 
 (fn Wall.draw [!] (!.sprite:draw !.x !.y))
 
+(fn Wall.collide? [! x y] (when (and (= !.x x) (= !.y y)) true))
+
 Wall

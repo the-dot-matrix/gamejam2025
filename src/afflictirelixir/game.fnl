@@ -32,7 +32,7 @@
   (set !.brain    (Entity:new :brain    8 1   :enemy))
   (set !.spleen   (Entity:new :spleen   1 9  :enemy))
   (set !.galblad  (Entity:new :galblad  8 9  :enemy))
-  (set !.wizard   (Entity:new :wizard   4 5   :chara))
+  (set !.wizard   (Entity:new :wizard   4 5   :chara (!.walls:query :collide?)))
   (set !.entities [!.heart !.brain !.spleen !.galblad !.wizard])
   (fn Game.grabETypeEntity [entities eType]
     (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))

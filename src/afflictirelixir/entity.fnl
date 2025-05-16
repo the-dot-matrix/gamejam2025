@@ -77,9 +77,6 @@
   (when (= !.eType :chara)
     (var keyUsed? false)
     (each [_ v (ipairs keys)]
-      (if (= v key) (set keyUsed? true)))
-    (when keyUsed?
-      (print "released+++++" key)))
-  )
+      (if (= v key) (set keyUsed? true)))))
 
 Entity

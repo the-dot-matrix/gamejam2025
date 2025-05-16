@@ -41,18 +41,6 @@
   ;         keypressed/released only call !.wizard now
   ;         all those weird type checks in Entity won't be needed
   ;         once you split the classes up
-  ;
-  ; (fn Game.grabETypeEntity [entities eType]
-  ;   (icollect [_ v (ipairs entities)] (if (= v.eType eType) v)))
-  ; (fn setAnimEnemy [entities]
-  ;   (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
-  ;     (v:genAnim {:static [1 6] :walk [7 12]})))
-  ; (setAnimEnemy !.entities)
-  ; ;;setStateEnemy useful for future in game.update potentially
-  ; (fn setStateEnemy [entities state]
-  ;   (each [_ v (ipairs (!.grabETypeEntity entities :enemy))]
-  ;     (v:setState state)))
-  ; (setStateEnemy !.entities :walk) ;; swap between :walk and :static
   !)
 
 (fn Game.update [! dt]

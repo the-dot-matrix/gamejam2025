@@ -14,8 +14,8 @@
   (let [(X Y)   (values (or ?x 0) (or ?y 0))
         pos     (tileB (+ left X) (+ up Y))
         sprite  (Sprite:new ?name)
-        anim    {:default {:f1 1 :f2 (length sprite.quads)}}
-        state   :default
+        anim    {:static {:f1 1 :f2 6} :walk {:f1 7 :f2 12}}
+        state   :walk
         pframe  0
         frame   0
         direc   (Vec:new 1 0)
@@ -81,6 +81,7 @@
         (local encounters (!.encounters !.pos.x !.pos.y))
         (when (> (length encounters) 0)
           (!.statusupdate encounters))))))
+
 (fn Entity.keyreleased [! key]
   (when (= !.eType :chara)
     (var keyUsed? false)

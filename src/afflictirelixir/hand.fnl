@@ -11,9 +11,9 @@
 (fn Hand.draw [!]
   (love.graphics.setColor 1 1 1 1)
   (love.graphics.print  :bottom 
-    (* !.x Tile.size) (* (- !.y 0.75) Tile.size))
+    (* !.x Tile.size) (* (- !.y 0.875) Tile.size))
   (love.graphics.printf :top    
-    !.x (* (- !.y 0.75) Tile.size)
+    !.x (* (- !.y 0.875) Tile.size)
     (* Card.w 2.5 Tile.size) :right)
   (love.graphics.rectangle :line 
     (* !.x Tile.size) (* !.y Tile.size) 

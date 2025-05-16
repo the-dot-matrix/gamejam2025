@@ -6,7 +6,9 @@
 (fn Status.new [! x y]
   (setmetatable {: x : y 
     :cards (accumulate [sum [] i h (ipairs Humor.humors)]
-              (do (table.insert sum (Card:new h)) sum))} 
+              (do (table.insert sum (Card:new h true)) sum))
+    :cycle (love.graphics.newImage 
+              :src/afflictirelixir/img/cycle.png)} 
     !))
 
 (fn Status.update [! humor])
@@ -21,6 +23,13 @@
     !.x (+ !.y 2.625)))
   (love.graphics.setStencilTest :less 1)
   ((. !.cards 1 :draw) (. !.cards 1) (+ !.x 1.75) !.y)
-  (love.graphics.setStencilTest))
+  (love.graphics.setStencilTest)
+  (love.graphics.push)
+  (love.graphics.rotate (/ math.pi 16))
+  (love.graphics.setBlendMode :screen)
+  (love.graphics.draw !.cycle 
+    (* (+ !.x 0.5) Tile.size) (* (- !.y 1.25) Tile.size))
+  (love.graphics.setBlendMode :alpha)
+  (love.graphics.pop))
 
 Status

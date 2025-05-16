@@ -1,7 +1,8 @@
 (local Vec (require :src.vec))
 (local Line (require :src.line))
-(local Spawner (require :src.spawner))
+(local Wall (require :src.afflictirelixir.wall))
 (local Entity (require :src.afflictirelixir.entity))
+(local Spawner (require :src.spawner))
 (local Hand (require :src.afflictirelixir.hand))
 (local Status (require :src.afflictirelixir.status))
 (local Humor (require :src.afflictirelixir.humor))
@@ -11,10 +12,10 @@
   (local tileLength 16)
   (if a (unpack [(* a 16) (tIndex ...)]) nil))
 (fn spawnBox [spawner x1 y1 x2 y2]
-  (spawner:spawn (tIndex x1 y1 x2 y1))
-  (spawner:spawn (tIndex x1 y1 x1 y2))
-  (spawner:spawn (tIndex x1 y2 x2 y2))
-  (spawner:spawn (tIndex x2 y1 x2 y2)))
+  (for [x x1 x2 1] (spawner:spawn (tIndex x y1)))
+  (for [x x1 x2 1] (spawner:spawn (tIndex x y2)))
+  (for [y y1 y2 1] (spawner:spawn (tIndex x1 y)))
+  (for [y y1 y2 1] (spawner:spawn (tIndex x2 y))))
 
 (fn Game.new [!]
   (local ! (setmetatable {} !))
@@ -23,16 +24,14 @@
   (set !.units (+ !.area (* !.border 2)))
   (set !.hand (Hand:new 0 1))
   (set !.status (Status:new 2 7))
-  ;; TODO cleanup below
-  (set !.board (Spawner:new Line))
-  (local (left up right down) (values 6 1 16 12))
-  (spawnBox !.board left up right down) ; 0 0 9 10 ; x1 y1 x2 y2
-  ; x{00 9} y{00 10}
+  (set !.walls (Spawner:new Wall))
+  (local (left up right down) (values 6 1 15 11))
+  (spawnBox !.walls left up right down)
   (set !.entities [])
-  (set !.heart    (Entity:new :heart    0 0   :enemy))
-  (set !.brain    (Entity:new :brain    9 0   :enemy))
-  (set !.spleen   (Entity:new :spleen   0 10  :enemy))
-  (set !.galblad  (Entity:new :galblad  9 10  :enemy))
+  (set !.heart    (Entity:new :heart    1 1   :enemy))
+  (set !.brain    (Entity:new :brain    8 1   :enemy))
+  (set !.spleen   (Entity:new :spleen   1 9  :enemy))
+  (set !.galblad  (Entity:new :galblad  8 9  :enemy))
   (set !.wizard   (Entity:new :wizard   4 5   :chara))
   (set !.entities [!.heart !.brain !.spleen !.galblad !.wizard])
   (fn Game.grabETypeEntity [entities eType]
@@ -60,18 +59,16 @@
     (* scale !.border.x)
     (* scale !.border.y))
   (love.graphics.push)
-  (love.graphics.translate (/ -16 4) (/ -16 4))
-  (!.board:draw scale)
+  (love.graphics.translate (* -16 0.125) (* -16 0.625))
   ;; entity draws
   (love.graphics.push)
   (love.graphics.scale scale scale)
-  (each [_ v (ipairs !.entities)]
-    (v:draw))
+  (!.walls:draw)
+  (each [_ v (ipairs !.entities)] (v:draw))
   (love.graphics.push)
-  (love.graphics.translate (/ 16 2) (/ -16 4))
+  (love.graphics.translate (/ 16 2) (/ 16 8))
   (!.hand:draw)
   (love.graphics.pop)
-  (love.graphics.translate 0 (* -16 0.375))
   (!.status:draw)
   (love.graphics.pop)
   ;; end of entity draws

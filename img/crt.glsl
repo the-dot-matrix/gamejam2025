@@ -1,8 +1,8 @@
 const float OX = 1.0/1600;
 const float OY = 1.0/1200;
 const int P = 3;
-const int B = 1;
-const float D = 2;
+const int B = 2;
+const float D = 1.5;
 const int S = 1;
 vec4 effect(vec4 color, Image tex, vec2 txy, vec2 sxy) {
   int x = int(sxy.x)/S;

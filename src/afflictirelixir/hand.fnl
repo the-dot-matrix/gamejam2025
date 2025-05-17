@@ -2,11 +2,14 @@
 (local Tile (require :src.afflictirelixir.tile))
 (local Hand {}) (set Hand.__index Hand)
 
-(fn Hand.new [! x y w]
-  (setmetatable {: x : y :cards []} !))
+(fn Hand.new [! x y usecard]
+  (setmetatable {: x : y :cards [] : usecard} !))
 
-(fn Hand.update [! humor] 
-  (table.insert !.cards (Card:new humor)))
+(fn Hand.update [! humor]
+  (if humor (table.insert !.cards (Card:new humor))
+            (when (> (length !.cards) 0) 
+                  (!.usecard (table.remove !.cards 
+                                (length !.cards))))))
 
 (fn Hand.draw [!]
   (love.graphics.setColor 1 1 1 1)

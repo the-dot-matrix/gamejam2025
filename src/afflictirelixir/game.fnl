@@ -22,8 +22,8 @@
   (set !.area (Vec:new 320 240))
   (set !.border (Vec:new 0 0))
   (set !.units (+ !.area (* !.border 2)))
-  (set !.hand (Hand:new 0 1))
-  (set !.status (Status:new 2 7))
+  (set !.hand (Hand:new 0 1 #(!.status.update !.status nil $1)))
+  (set !.status (Status:new 2 7 #(!.hand.update !.hand $1)))
   (set !.walls (Spawner:new Wall))
   (local (left up right down) (values 6 1 18 13))
   (spawnBox !.walls left up right down)
@@ -36,11 +36,6 @@
                     (!.walls:query :collide?) 
                     (!.enemies:query :collide?)
                     #(!.status.update !.status $1)))
-  ; TODO    Entity class is a really weird abstraction
-  ;         why not just enemies and player?
-  ;         keypressed/released only call !.wizard now
-  ;         all those weird type checks in Entity won't be needed
-  ;         once you split the classes up
   !)
 
 (fn Game.update [! dt]
@@ -71,7 +66,7 @@
   (love.graphics.pop))
 
 (fn Game.keypressed [! key]
-  (when (= key :y) (!.hand:update (Humor.random)))
+  (when (= key :y) (!.status:update nil (!.hand:update)))
   (!.wizard:keypressed key))
 
 (fn Game.keyreleased [! key]

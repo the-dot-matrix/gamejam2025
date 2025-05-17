@@ -80,7 +80,7 @@
           (set !.pos oldpos))
         (local encounters (!.encounters !.pos.x !.pos.y))
         (when (> (length encounters) 0)
-          (!.statusupdate encounters))))))
+          (!.statusupdate (. encounters 1)))))))
 
 (fn Entity.keyreleased [! key]
   (when (= !.eType :chara)

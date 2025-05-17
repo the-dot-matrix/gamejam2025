@@ -13,10 +13,11 @@
   (for [y y1 y2 1] (spawner:spawn (tIndex x2 y))))
 
 (fn Board.new [! level status]
+  (local ! (setmetatable {} !))
   (set !.walls (Spawner:new Wall))
-  (set !.enemies (Spawner:new Entity))
+  (set !.enemies (Spawner:new Entity nil true))
   (set !.data (love.image.newImageData 
-                (.. :src/afflictirelixir/img/ level :.png)))
+              (.. :src/afflictirelixir/img/level level :.png)))
   (set !.status status)
   (!.data:mapPixel #(Board.map ! $...))
   (when (not !.wizard) 
@@ -27,16 +28,22 @@
   !)
 
 (fn Board.map [! x y r g b a]
-  (case [r g b]
-    [1 1 1] (!.walls:spawn (tIndex x y))
-    [1 0 0] (!.enemies:spawn :heart x y :enemy)
-    [0 1 0] (!.enemies:spawn :galblad x y :enemy)
-    [0 0 1] (!.enemies:spawn :brain x y :enemy)
-    [1 1 0] (!.enemies:spawn :spleen x y :enemy)
-    [0 1 1] (set !.wizard (Entity:new :wizard x y :chara 
-                            (!.walls:query :collide?) 
-                            (!.enemies:query :collide?)
-                            #(!.status.update !.status $1))))
+  (if (not= y 0) 
+    (case [r g b]
+      [1 1 1] (!.walls:spawn (tIndex x y))
+      [1 0 0] (!.enemies:spawn :heart x y :enemy)
+      [0 1 0] (!.enemies:spawn :galblad x y :enemy)
+      [0 0 1] (!.enemies:spawn :brain x y :enemy)
+      [1 1 0] (!.enemies:spawn :spleen x y :enemy)
+      [0 1 1] (set !.wizard (Entity:new :wizard x y :chara 
+                              (!.walls:query :collide?) 
+                              (!.enemies:query :collide? true)
+                              #(!.status.update !.status $1))))
+    (case [r g b]
+      [1 0 0] (!.status:update :heart)
+      [0 1 0] (!.status:update :galblad)
+      [0 0 1] (!.status:update :brain)
+      [1 1 0] (!.status:update :spleen)))
   (values r g b))
 
 (fn Board.update [! dt]

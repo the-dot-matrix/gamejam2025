@@ -12,6 +12,10 @@
     : addcard} 
     !))
 
+(fn Status.win? [!]
+  (accumulate [down? true i card (ipairs !.cards)]
+    (and down? card.down?)))
+
 (fn Status.update [! enemy hand]
   (local humor (or  (and hand hand.humor.name) 
                     (. Humor.byenemy enemy)))

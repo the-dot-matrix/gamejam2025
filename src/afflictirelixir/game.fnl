@@ -9,13 +9,20 @@
   (set !.area (Vec:new 320 240))
   (set !.border (Vec:new 0 0))
   (set !.units (+ !.area (* !.border 2)))
-  (set !.hand (Hand:new 0 1 #(!.status.update !.status nil $1)))
-  (set !.status (Status:new 2 7 #(!.hand.update !.hand $1)))
-  (set !.board (Board:new :level1 !.status))
+  (set !.level 1)
+  (Game.load ! !.level)
   !)
 
+(fn Game.load [!]
+  (set !.hand (Hand:new 0 1 #(!.status.update !.status nil $1)))
+  (set !.status (Status:new 2 7 #(!.hand.update !.hand $1)))
+  (set !.board (Board:new !.level !.status)))
+
 (fn Game.update [! dt]
-  (!.board:update dt))
+  (!.board:update dt)
+  (when (!.status:win?) 
+    (set !.level (+ !.level 1))
+    (!:load)))
 
 (fn Game.draw [! scale]
   (love.graphics.clear 0.65 0.65 0.65)
@@ -40,6 +47,7 @@
 
 (fn Game.keypressed [! key]
   (when (= key :y) (!.status:update nil (!.hand:update)))
+  (when (= key :x) (!:load))
   (!.board:keypressed key))
 
 (fn Game.keyreleased [! key]

@@ -14,18 +14,30 @@
 
 (fn Board.new [! level status]
   (set !.walls (Spawner:new Wall))
-  (local (left up right down) (values 6 1 18 13))
-  (spawnBox !.walls left up right down)
   (set !.enemies (Spawner:new Entity))
-  (set !.heart    (!.enemies:spawn :heart    1 1   :enemy))
-  (set !.brain    (!.enemies:spawn :brain    11 1   :enemy))
-  (set !.spleen   (!.enemies:spawn :spleen   1 11  :enemy))
-  (set !.galblad  (!.enemies:spawn :galblad  11 11  :enemy))
-  (set !.wizard   (Entity:new :wizard   4 5   :chara 
+  (set !.data (love.image.newImageData 
+                (.. :src/afflictirelixir/img/ level :.png)))
+  (set !.status status)
+  (!.data:mapPixel #(Board.map ! $...))
+  (when (not !.wizard) 
+    (set !.wizard (Entity:new :wizard 7 7 :chara 
                     (!.walls:query :collide?) 
                     (!.enemies:query :collide?)
-                    #(status.update status $1)))
+                    #(!.status.update !.status $1))))
   !)
+
+(fn Board.map [! x y r g b a]
+  (case [r g b]
+    [1 1 1] (!.walls:spawn (tIndex x y))
+    [1 0 0] (!.enemies:spawn :heart x y :enemy)
+    [0 1 0] (!.enemies:spawn :galblad x y :enemy)
+    [0 0 1] (!.enemies:spawn :brain x y :enemy)
+    [1 1 0] (!.enemies:spawn :spleen x y :enemy)
+    [0 1 1] (set !.wizard (Entity:new :wizard x y :chara 
+                            (!.walls:query :collide?) 
+                            (!.enemies:query :collide?)
+                            #(!.status.update !.status $1))))
+  (values r g b))
 
 (fn Board.update [! dt]
   (!.enemies:update dt)

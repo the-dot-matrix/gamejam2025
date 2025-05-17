@@ -25,7 +25,7 @@
     (* scale !.border.y))
   (love.graphics.scale scale scale)
   (love.graphics.push)
-  (love.graphics.translate (/ 16 2) 0)
+  (love.graphics.translate (* 16 5.5) 0)
   (!.board:draw)
   (love.graphics.pop)
   (love.graphics.push)

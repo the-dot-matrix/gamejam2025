@@ -2,7 +2,6 @@
 (local Sprite (require :src.afflictirelixir.sprite))
 (local Vec (require :src.vec))
 
-(local (left up right down) (values 6 1 16 12))
 ;; 0 9 0 10
 
 
@@ -12,7 +11,7 @@
 ;;CURRENT ENTITY NEW VALUES ARE BAD USED ONLY FOR CURRENT GAMEBOARD
 (fn Entity.new [! ?name  ?x ?y ?eType collides encounters statusupdate]
   (let [(X Y)   (values (or ?x 0) (or ?y 0))
-        pos     (tileB (+ left X) (+ up Y))
+        pos     (tileB X Y)
         sprite  (Sprite:new ?name)
         anim    {:static {:f1 1 :f2 6} :walk {:f1 7 :f2 12}}
         state   :walk

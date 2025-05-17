@@ -20,6 +20,11 @@
     :brain (. Humor.humors 2 :name)
     :spleen (. Humor.humors 3 :name)
     :galblad (. Humor.humors 4 :name)})
+(set Humor.toenemy
+  { (. Humor.humors 1 :name) :heart    
+    (. Humor.humors 2 :name) :brain    
+    (. Humor.humors 3 :name) :spleen   
+    (. Humor.humors 4 :name) :galblad})
 (set Humor.__index Humor)
 
 (fn Humor.random []

@@ -29,7 +29,7 @@
 
 (fn Status.draw [!]
   (each [i c (ipairs !.cards)] (case i
-    1 (c:draw (+ !.x 1.75) !.y)
+    1 nil
     2 (c:draw !.x (+ !.y 2.625))
     3 (c:draw (- !.x 1.75) !.y)
     4 (c:draw !.x (- !.y 2.625))))

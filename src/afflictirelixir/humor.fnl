@@ -1,9 +1,10 @@
+(local (hexAA hex55) (values (/ 170 255) (/ 85 255)))
 (local Humor {
   ;TODO EGA16 colors
-  :humors [ {:name :blood   :color [1 0 0 1]}
-            {:name :phlegm  :color [0 0 1 1]}
-            {:name :yellow  :color [1 1 0 1]}
-            {:name :black   :color [0 1 0 1]} ]})
+  :humors [ {:name :blood   :color [hexAA hex55 hex55 1]}
+            {:name :phlegm  :color [hex55 hex55 hexAA 1]}
+            {:name :yellow  :color [hexAA hexAA hex55 1]}
+            {:name :black   :color [hex55 hexAA hex55 1]} ]})
 (set Humor.color 
   { (. Humor.humors 1 :name) (. Humor.humors 1 :color)
     (. Humor.humors 2 :name) (. Humor.humors 2 :color)
